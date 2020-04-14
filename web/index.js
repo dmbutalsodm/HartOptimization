@@ -6,10 +6,9 @@ app.get('/', (req, res) => {
     request('http://localhost:3000/api').then(b => {
         res.send(b);
     })
-    
     return;
 })
 
 app.listen(80, () => {
-    console.log("Listening on localhost port 80.")
+    console.log("The WEBSERVER is listening on localhost port 80.");
 })
