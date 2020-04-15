@@ -15,7 +15,7 @@ class SQLConnection {
 
 	async start() {
 		await this.db.authenticate();
-		this.db.sync()
+		return this.db.sync()
 			.then(() => console.log(`Successfully connected to database!`))
 			.catch((err) => console.log(err));
 	}

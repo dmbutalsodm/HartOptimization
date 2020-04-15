@@ -27,7 +27,7 @@ module.exports = {
         return machines.findAll().then(rows => {
             rows.forEach((row) => {
                 const r = row.get();
-                machineManager.getOrCreateTool(r.id).attributes[r.key] = r.value;
+                machineManager.getOrCreateMachine(r.id).attributes[r.key] = r.value;
             });
             console.log(machineManager.machines);
         })
