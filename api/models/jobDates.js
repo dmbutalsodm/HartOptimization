@@ -9,10 +9,14 @@ const jobMachines = db.define('jobMachines', {
         allowNull: false,
         primaryKey: true
     },
-    machineId: {
+    date: {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true
+    },
+    partsProduced: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
 });
 
