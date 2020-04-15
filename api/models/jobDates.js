@@ -14,10 +14,13 @@ const jobMachines = db.define('jobMachines', {
         allowNull: false,
         primaryKey: true
     },
-    partsProduced: {
+    partsDesired: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    partsProduced: {
+        type: DataTypes.INTEGER,
+    }
 });
 
 db.sync();

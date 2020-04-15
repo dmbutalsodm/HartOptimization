@@ -9,6 +9,7 @@ const job = db.define('jobs', {
         allowNull: false,
         primaryKey: true
     },
+    jobName:             { type: DataTypes.STRING  },
     activeMachine:       { type: DataTypes.STRING  },
     startDate:           { type: DataTypes.STRING  },
     dueDate:             { type: DataTypes.STRING  },
