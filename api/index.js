@@ -11,29 +11,18 @@ app.use(bodyParser.urlencoded({
     extended: true
   }));
 app.use(bodyParser.json())
-
-const ToolManager = require('./objects/tool/ToolManager.js');
-const toolManager = new ToolManager();
-
-app.get('/api/', (req, res) => {
-    res.send("This is the API landing.");
-    return;
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost");
+    next();
 })
 
-app.get('/tools', (req, res) => {
-    res.json(toolManager.getTools());
-})
+require('./routes/toolRoutes.js').registerToolPaths(app);
+const tm = require('./objects/tool/ToolManager.js');
+require('./models/tool').buildToolDatabase(tm)
 
-app.get('/tools/:id', (req, res) => {
-    res.json(toolManager.getTool(req.params.id));
-})
-
-app.post('/tools/', (req, res) => {
-    if (!req.body.id) return res.json({status: "error", message: "No tool ID was provided in the request body."});
-    // Potential required parameter check other than ID here if necessary.
-    toolManager.addTool(req.body);
-    return res.json({status: "ok", message: `The tool with the id ${req.body.id} has been added`}) 
-})
+require('./routes/machineRoutes.js').registerMachinePaths(app);
+const mm = require('./objects/machine/MachineManager.js');
+require('./models/machine').buildMachineDatabase(mm)
 
 app.listen(3000, () => {
     console.log("The API is listening on localhost port 3000.")

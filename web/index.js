@@ -4,7 +4,7 @@ const app = express();
 
 app.get('/', (req, res) => {
     request('http://localhost:3000/api').then(b => {
-        res.send(b);
+        res.send("<>hello</b>");
     })
     return;
 })
