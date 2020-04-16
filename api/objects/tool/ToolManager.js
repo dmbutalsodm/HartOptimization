@@ -1,4 +1,5 @@
 const Tool = require('./Tool.js');
+const toolDB = require('../../models/tool.js')
 
 class ToolManager {
     constructor() {
@@ -14,11 +15,16 @@ class ToolManager {
         return null;
     }
 
+    getToolByName(name) {
+        for (const t of this.tools) if (t.attributes.name == name) return t;
+        return null;
+    }
+
     addTool(toolDetails) {
-        if (this.getTool(toolDetails.id)) throw new Error("A tool with that ID already exists in the library.")
-        // Tool constructor takes care of adding itself to the database
+        if (this.getToolByName(toolDetails.name)) throw new Error("A tool by the name '" + toolDetails.name + "' already exists.")
         const newTool = new Tool(toolDetails);
         this.tools.push(newTool)
+        toolDB.insertTool(newTool);
         return newTool;
     }
 
@@ -29,4 +35,5 @@ class ToolManager {
     }
 }
 
-module.exports = new ToolManager();
+const single =  new ToolManager();
+module.exports = single;

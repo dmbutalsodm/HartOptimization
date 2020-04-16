@@ -15,7 +15,7 @@ GET /api/tools/:id
 Gets a specific tool, found by its id
 
 POST /api/tools
-Creates a new tool. ID field required, any additional fields are optional.
+Creates a new tool. 'name' field required, any additional fields are optional.
 
 ## Tool Manager 
 Tool Manager is a singleton that holds all the tools, and takes care of various tasks involving the collection
@@ -31,7 +31,7 @@ GET /api/machines/:id
 Gets a specific machines, found by its id
 
 POST /api/machines
-Creates a new machines. ID field required, any additional fields are optional.
+Creates a new machines. 'name' field required, any additional fields are optional.
 
 ## Machine Manager
 Machine Manager is a singleton that holds all the machines, and takes care of various tasks involving the collection.

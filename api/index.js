@@ -5,14 +5,12 @@ const bodyParser = require('body-parser');
 const secrets = require('./secrets.js')
 const db = require('./db.js');
 
-db.start().then(() => {
+db.start().then(async () => {
+    require('./models/tool').buildToolDatabase()
     require('./routes/toolRoutes.js').registerToolPaths(app);
-    const tm = require('./objects/tool/ToolManager.js');
-    require('./models/tool').buildToolDatabase(tm)
 
+    require('./models/machine').buildMachineDatabase()
     require('./routes/machineRoutes.js').registerMachinePaths(app);
-    const mm = require('./objects/machine/MachineManager.js');
-    require('./models/machine').buildMachineDatabase(mm)
 })
 
 app.set('env', secrets.DEV_OR_PROD == "prod" ? "production" : "dev")

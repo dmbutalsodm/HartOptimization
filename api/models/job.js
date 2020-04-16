@@ -21,7 +21,7 @@ const job = db.define('jobs', {
     projectedFinishDays: { type: DataTypes.INTEGER },
     projectedFinishDate: { type: DataTypes.STRING  },
 });
-
+           
 db.sync();
 
 module.exports = {

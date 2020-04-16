@@ -1,4 +1,5 @@
 const Machine = require('./Machine.js');
+const machineDB = require('../../models/machine.js')
 
 class MachineManager {
     constructor() {
@@ -14,10 +15,16 @@ class MachineManager {
         return null;
     }
 
+    getMachineByName(name) {
+        for (const m of this.machines) if (m.attributes.name == name) return m;
+        return null;
+    }
+
     addMachine(machineDetails) {
-        if (this.getMachine(machineDetails.id)) throw new Error("A machine with that ID already exists in the library.")
+        if (this.getMachineByName(machineDetails.name)) throw new Error("A machine by the name '" + machineDetails.name + "' already exists.") //optimise
         const newMachine = new Machine(machineDetails);
         this.machines.push(newMachine)
+        machineDB.insertMachine(newMachine);
         return newMachine;
     }
 
@@ -27,5 +34,5 @@ class MachineManager {
         return this.addMachine({id: id})
     }
 }
-
-module.exports = new MachineManager();
+const single = new MachineManager();
+module.exports = single;

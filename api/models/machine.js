@@ -9,7 +9,7 @@ const machines = db.define('machines', {
         allowNull: false,
         primaryKey: true
     },
-    key: {
+    tag: {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true
@@ -22,23 +22,25 @@ const machines = db.define('machines', {
 
 db.sync();
 
+
 module.exports = {
-    async buildMachineDatabase(machineManager) {
+    async buildMachineDatabase() {
+        const machineManager = require('../objects/machine/MachineManager.js')
         return machines.findAll().then(rows => {
             rows.forEach((row) => {
                 const r = row.get();
-                machineManager.getOrCreateMachine(r.id).attributes[r.key] = r.value;
+                machineManager.getOrCreateMachine(r.id).attributes[r.tag] = r.value;
             });
             console.log(machineManager.machines);
         })
     },
 
     insertMachine(machine) {
-        for(const key of Object.keys(machine.attributes)) {
+        for(const tag of Object.keys(machine.attributes)) {
             machines.create({
                 id: machine.id,
-                key: key,
-                value: machine.attributes[key]
+                tag: tag,
+                value: machine.attributes[tag]
             })
         }
     },

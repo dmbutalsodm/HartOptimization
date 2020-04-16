@@ -9,7 +9,7 @@ const tools = db.define('tools', {
         allowNull: false,
         primaryKey: true
     },
-    key: {
+    tag: {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true
@@ -29,22 +29,23 @@ const tools = db.define('tools', {
 db.sync();
 
 module.exports = {
-    async buildToolDatabase(toolManager) {
+    async buildToolDatabase() {
+        const toolManager = require('../objects/tool/ToolManager.js')
         return tools.findAll().then(rows => {
             rows.forEach((row) => {
                 const r = row.get();
-                toolManager.getOrCreateTool(r.id).attributes[r.key] = r.value;
+                toolManager.getOrCreateTool(r.id).attributes[r.tag] = r.value;
             });
             console.log(toolManager.tools);
         })
     },
 
     insertTool(tool) {
-        for(const key of Object.keys(tool.attributes)) {
+        for(const tag of Object.keys(tool.attributes)) {
             tools.create({
                 id: tool.id,
-                key: key,
-                value: tool.attributes[key]
+                tag: tag,
+                value: tool.attributes[tag]
             })
         }
     },

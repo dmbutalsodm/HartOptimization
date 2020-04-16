@@ -1,23 +1,17 @@
-const machineDB = require('../../models/machine.js')
+const Uuid = require('../UuidGenerator.js');
 
 module.exports = class Machine {
     attributes = {};
     id;
 
     constructor(machineAttributes) {
-        this.id = machineAttributes.id;
-        delete machineAttributes.id;
+        this.id = machineAttributes.id || Uuid.getPrefixedSnowflake("m");
+        delete machineAttributes.id
         this.attributes = machineAttributes
-        machineDB.insertMachine(this);
     }
 
-    addNumberAttribute(key, value) {
-        if (!key || !value) throw new Error("The key or value for a machine attribute cannot be null.")
-        this.addAttribute[key] = parseInt(value);
-    }
-
-    addStringAttribute(key, value) {
-        if (!key || !value) throw new Error("The key or value for a machine attribute cannot be null.")
-        this.attributes[key] = value + "";
+    addAttribute(tag, value) {
+        if (!tag || !value) throw new Error("The tag or value for a machine attribute cannot be null.")
+        this.addAttribute[tag] = value
     }
 }

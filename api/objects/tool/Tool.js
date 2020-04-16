@@ -1,24 +1,17 @@
-const toolDB = require('../../models/tool.js');
+const Uuid = require('../UuidGenerator.js');
 
 module.exports = class Tool {
     attributes = {};
     id;
 
     constructor(toolAttributes) {
-        this.id = toolAttributes.id;
+        this.id = toolAttributes.id || Uuid.getPrefixedSnowflake("t");
         delete toolAttributes.id;
         this.attributes = toolAttributes
-        toolDB.insertTool(this);
     }
 
-    addNumberAttribute(key, value) {
-        if (!key || !value) throw new Error("The key or value for a tool attribute cannot be null.")
-        this.addAttribute[key] = parseInt(value);
+    addAttribute(tag, value) {
+        if (tag || !value) throw new Error("The tag or value for a tool attribute cannot be null.")
+        this.addAttribute[tag] = value
     }
-
-    addStringAttribute(key, value) {
-        if (!key || !value) throw new Error("The key or value for a tool attribute cannot be null.")
-        this.attributes[key] = value + "";
-    }
-
 }

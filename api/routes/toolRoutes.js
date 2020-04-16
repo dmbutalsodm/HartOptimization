@@ -17,16 +17,14 @@ module.exports = {
         })
         
         app.post('/api/tools/', (req, res) => {
-            if (!req.body.id) return res.json({status: "error", message: "No tool ID was provided in the request body."});
-            // Potential required parameter check other than ID here if necessary.
-            let toolID = req.body.id // separate variable because tool deletes toolattributes.id
-            if (toolID[0] !== "t") return res.json({status: "error", message: "The tool's ID must start with a lowercase t."}); // Future: maybe auto gen IDs
+            if (!req.body.name) return res.json({status: "error", message: "The 'name' field is required in the request body."});
+            let toolName = req.body.name // separate variable because tool deletes toolattributes.id
             try {
                 toolManager.addTool(req.body);
             } catch (e) {
                 return res.json({status: "error", message: e.message})
             }
-            return res.json({status: "ok", message: `The tool with the id ${toolID} has been added`}) 
+            return res.json({status: "ok", message: `The tool with the name '${toolName}' has been added`}) 
         })
     }
 }

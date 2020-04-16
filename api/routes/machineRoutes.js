@@ -1,4 +1,4 @@
-const machineManager = require('../objects/machine/machineManager.js')
+const machineManager = require('../objects/machine/MachineManager.js')
 const machineDB = require('../models/machine.js');
 
 module.exports = {
@@ -13,16 +13,20 @@ module.exports = {
         })
         
         app.post('/api/machines/', (req, res) => {
-            if (!req.body.id) return res.json({status: "error", message: "No machine ID was provided in the request body."});
-            // Potential required parameter check other than ID here if necessary.
-            let machineID = req.body.id // separate variable because machine deletes machineattributes.id
-            if (machineID[0] !== "m") return res.json({status: "error", message: "The machine's ID must start with a lowercase m."}); // Future: maybe auto gen IDs
+            if (!req.body.name) return res.json({status: "error", message: "The 'name' field is required in the request body."});
+            let machineName = req.body.name // separate variable because machine deletes machineattributes.id
             try {
                 machineManager.addMachine(req.body);
             } catch (e) {
                 return res.json({status: "error", message: e.message})
             }
-            return res.json({status: "ok", message: `The machine with the id ${machineID} has been added`}) 
+            return res.json({status: "ok", message: `The machine with the name '${machineName}' has been added`}) 
         })
+
+        app.post('/api/machines/:id/adTools', (req, res) => {
+            const selectedMachine = machineManager.getMachine(req.params.id);
+            if (!selectedMachine) res.json({status: "error", message: "There is no machine by the id provided."});
+            toolManager.assignMachines(req.body.tools);
+        });
     }
 }
