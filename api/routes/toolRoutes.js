@@ -28,7 +28,7 @@ module.exports = {
         })
 
         app.post('/api/tools/freeTools', (req, res) => {
-            if (!req.body.tools  || !req.body.tools.length) res.json({status: "error", message: "Invalid tool list."});
+            if (!req.body.tools  || !req.body.tools.length) return res.json({status: "error", message: "Invalid tool list."});
             let names = toolManager.freeTools(req.body.tools);
             return res.json({status: "ok", message: `The following tools have been removed from machines: ${names.join(", ")}`})
         })

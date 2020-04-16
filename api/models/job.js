@@ -9,7 +9,7 @@ const job = db.define('jobs', {
         allowNull: false,
         primaryKey: true
     },
-    jobName:             { type: DataTypes.STRING  },
+    jobName:             { type: DataTypes.STRING, allowNull: false },
     activeMachine:       { type: DataTypes.STRING  },
     startDate:           { type: DataTypes.STRING  },
     dueDate:             { type: DataTypes.STRING  },
@@ -25,5 +25,18 @@ const job = db.define('jobs', {
 db.sync();
 
 module.exports = {
-    
+    addNewEmptyJob(jobName, jobId) {
+        return job.create({
+            jobId: jobId,
+            jobName: jobName
+        });
+    },
+
+    jobNameExists(jobName) {
+        return job.findOne({
+            where: {
+                jobName: jobName
+            }
+        }).then(modelOrNull => !!modelOrNull);
+    }
 }

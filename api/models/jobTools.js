@@ -19,5 +19,10 @@ const jobTools = db.define('jobTools', {
 db.sync();
 
 module.exports = {
-    
+    addJobTool(jobId, toolId) {
+        return jobTools.upsert({
+            jobId: jobId,
+            toolId: toolId
+        });
+    }
 }

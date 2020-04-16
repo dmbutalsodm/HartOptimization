@@ -11,6 +11,8 @@ db.start().then(async () => {
 
     require('./models/machine').buildMachineDatabase()
     require('./routes/machineRoutes.js').registerMachinePaths(app);
+
+    require('./routes/jobRoutes.js').registerJobPaths(app);
 })
 
 app.set('env', secrets.DEV_OR_PROD == "prod" ? "production" : "dev")

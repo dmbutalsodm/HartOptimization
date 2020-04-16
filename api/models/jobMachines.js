@@ -19,5 +19,10 @@ const jobMachines = db.define('jobMachines', {
 db.sync();
 
 module.exports = {
-    
+    addJobMachine(jobId, machineId) {
+        return jobMachines.upsert({
+            jobId: jobId,
+            machineId: machineId
+        });
+    }
 }
