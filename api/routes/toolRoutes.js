@@ -26,5 +26,11 @@ module.exports = {
             }
             return res.json({status: "ok", message: `The tool with the name '${toolName}' has been added`}) 
         })
+
+        app.post('/api/tools/freeTools', (req, res) => {
+            if (!req.body.tools  || !req.body.tools.length) res.json({status: "error", message: "Invalid tool list."});
+            let names = toolManager.freeTools(req.body.tools);
+            return res.json({status: "ok", message: `The following tools have been removed from machines: ${names.join(", ")}`})
+        })
     }
 }

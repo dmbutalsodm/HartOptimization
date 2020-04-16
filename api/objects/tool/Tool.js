@@ -6,6 +6,8 @@ module.exports = class Tool {
 
     constructor(toolAttributes) {
         this.id = toolAttributes.id || Uuid.getPrefixedSnowflake("t");
+        this.machine = toolAttributes.machine
+        delete toolAttributes.machine;
         delete toolAttributes.id;
         this.attributes = toolAttributes
     }

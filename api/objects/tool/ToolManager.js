@@ -28,10 +28,38 @@ class ToolManager {
         return newTool;
     }
 
-    getOrCreateTool(id) {
+    getOrCreateTool(id, machine) {
         const toolTest = this.getTool(id);
         if (toolTest) return toolTest;
-        return this.addTool({id: id})
+        return this.addTool({id: id, machine: machine})
+    }
+
+    assignToolsToMachine(machineID, toolIDArray) {
+        // Machine ID is verified before it is passed in, so we do not need to verify it ourselves.
+        let names = [];
+        toolIDArray.forEach(tid => {
+            // If the provided tool ID is invalid, fail silently.
+            let tTest = this.getTool(tid)
+            if (tTest) {
+                names.push(tTest.attributes.name);
+                toolDB.insertToolIntoMachine(tid, machineID);
+            }
+        });
+        return names;
+    }
+
+    freeTools(toolIDArray) {
+        let names = [];
+        toolIDArray.forEach(tid => {
+            // If the provided tool ID is invalid, fail silently.
+            let tTest = this.getTool(tid)
+            if (tTest) {
+                tTest.machine = null;
+                names.push(tTest.attributes.name);
+                toolDB.freeTool(tid);
+            }
+        });
+        return names;
     }
 }
 

@@ -34,7 +34,7 @@ module.exports = {
         return tools.findAll().then(rows => {
             rows.forEach((row) => {
                 const r = row.get();
-                toolManager.getOrCreateTool(r.id).attributes[r.tag] = r.value;
+                toolManager.getOrCreateTool(r.id, r.machine).attributes[r.tag] = r.value;
             });
             console.log(toolManager.tools);
         })
@@ -45,21 +45,33 @@ module.exports = {
             tools.create({
                 id: tool.id,
                 tag: tag,
-                value: tool.attributes[tag]
+                value: tool.attributes[tag],
+                machine: tool.machine
             })
         }
     },
 
-    insertToolIntoMachine(tool, machine) {
+    insertToolIntoMachine(toolID, machineID) {
         return tools.findAll({
             where: {
-                id: tool.id
+                id: toolID
             }
         }).then(rows => {
             rows.forEach(row => {
-                row.setDataValue('machine', machine.id);
+                row.update({
+                    'machine': machineID
+                });
             })
         })
-    }
+    },
 
+    freeTool(toolID) {
+        return tools.update({
+            machine: null
+        }, {
+            where: {
+                id: toolID
+            }
+        })
+    }
 }

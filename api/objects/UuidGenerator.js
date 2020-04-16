@@ -3,7 +3,7 @@ class UuidGenerator {
     
     getSnowflake() {
         this.startIndex += 1;
-        return `${Date.now()}${this.startIndex}${process.pid}`;
+        return `${this.startIndex}${process.pid}${Date.now()}`;
     }
 
     getPrefixedSnowflake(prefix) {
