@@ -17,6 +17,9 @@ Gets a specific tool, found by its id
 POST /api/tools
 Creates a new tool. 'name' field required, any additional fields are optional.
 
+POST /api/tools/freeTools
+Removes tools from machines. Takes an array called "tools" in the post body with the IDs of the tools to be removed.
+
 ## Tool Manager 
 Tool Manager is a singleton that holds all the tools, and takes care of various tasks involving the collection
 
@@ -32,6 +35,10 @@ Gets a specific machines, found by its id
 
 POST /api/machines
 Creates a new machines. 'name' field required, any additional fields are optional.
+
+POST /api/machines/:id/addTools
+Loads tools into the machines. The post body should have an array called "tools" with the tool IDs that are to be loaded into the machine.
+Tools can only be loaded into one machine at once, and loading a tool into a machine that is already loaded into another will result in a transfer, not an error.
 
 ## Machine Manager
 Machine Manager is a singleton that holds all the machines, and takes care of various tasks involving the collection.
