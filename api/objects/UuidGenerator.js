@@ -1,4 +1,4 @@
-//Generates unique identifiers for jobs/machines.
+//Generates unique identifiers
 class UuidGenerator {
     startIndex = 100
     

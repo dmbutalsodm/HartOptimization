@@ -1,6 +1,6 @@
 const Uuid = require('../UuidGenerator.js');
 
-// Represents a physical tool that can be inserted into a machine and perform a job.
+// Represents a physical tool that can be inserted into a machine and perform an op.
 module.exports = class Tool {
     attributes = {};
     id;

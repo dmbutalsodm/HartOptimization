@@ -24,7 +24,7 @@ Removes tools from machines. Takes an array called "tools" in the post body with
 Tool Manager is a singleton that holds all the tools, and takes care of various tasks involving the collection
 
 ## Machine
-Machine is a type that represents a machine that holds tools and can process jobs.
+Machine is a type that represents a machine that holds tools and can process ops.
 
 ## Machine Endpoints
 GET /api/machines  
@@ -43,13 +43,13 @@ Tools can only be loaded into one machine at once, so loading a tool into a mach
 ## Machine Manager
 Machine Manager is a singleton that holds all the machines, and takes care of various tasks involving the collection.
 
-## Job Manager
-Job manager is a type that interfaces with the database to coordinate job information.
+## Op Manager
+OpManager is a type that interfaces with the database to coordinate op information.
 
-## Job Endpoints
-POST /api/jobs/create  
-Creates an empty job template. Meaning it's not instantiated, but the requirements are in.  
+## Op Endpoints
+POST /api/ops/create  
+Creates an op that can be performed on a machine.
 Takes 3 parameters in its post body.  
-* name: The name of the job. 
-* tools: An array of the Tool IDs that this job needs to complete.
-* machines: An array of the Machine IDs that are capable of completing this job.
+* name: The name of the op. 
+* tools: An array of the Tool IDs that this op needs to complete.
+* machines: An array of the Machine IDs that are capable of completing this op.

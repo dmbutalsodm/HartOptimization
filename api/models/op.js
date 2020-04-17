@@ -4,14 +4,15 @@ const Database = require('../db.js');
 const db = Database.db;
 
 
-// This table holds all template jobs, which can be instantiated to active jobs.
-const job = db.define('jobs', {
-	jobId: {
+// This table holds all template ops, which can be instantiated to active ops.
+const op = db.define('ops', {
+	opId: {
         type: DataTypes.STRING, // Dual primary key :) 
         allowNull: false,
         primaryKey: true
     },
-    jobName:             { type: DataTypes.STRING, allowNull: false },
+    partId:              { type: DataTypes.STRING, allowNull: true /** BUT MAKE FALSE LATER */ , primaryKey: false},
+    opName:              { type: DataTypes.STRING, allowNull: false },
     activeMachine:       { type: DataTypes.STRING  },
     startDate:           { type: DataTypes.STRING  },
     dueDate:             { type: DataTypes.STRING  },
@@ -27,19 +28,19 @@ const job = db.define('jobs', {
 db.sync();
 
 module.exports = {
-    // Add a new template job
-    addNewEmptyJob(jobName, jobId) {
-        return job.create({
-            jobId: jobId,
-            jobName: jobName
+    // Add a new template op
+    addNewEmptyOp(opName, opId) {
+        return op.create({
+            opId: opId,
+            opName: opName
         });
     },
 
     // For duplicate checking.
-    jobNameExists(jobName) {
-        return job.findOne({
+    async opNameExists(opName) {
+        return op.findOne({
             where: {
-                jobName: jobName
+                opName: opName
             }
         }).then(modelOrNull => !!modelOrNull);
     }
