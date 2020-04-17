@@ -1,6 +1,7 @@
 const Tool = require('./Tool.js');
 const toolDB = require('../../models/tool.js')
 
+// Holds all tools and manages their info.
 class ToolManager {
     constructor() {
         this.tools = [];
@@ -24,16 +25,19 @@ class ToolManager {
         if (this.getToolByName(toolDetails.name)) throw new Error("A tool by the name '" + toolDetails.name + "' already exists.")
         const newTool = new Tool(toolDetails);
         this.tools.push(newTool)
+        // Adds a new tool to the database.
         toolDB.insertTool(newTool);
         return newTool;
     }
 
+    // For rebuilding the tool cache on launch.
     getOrCreateTool(id, machine) {
         const toolTest = this.getTool(id);
         if (toolTest) return toolTest;
         return this.addTool({id: id, machine: machine})
     }
 
+    // Populates the machine attribute with the machine the tool is in. 
     assignToolsToMachine(machineID, toolIDArray) {
         // Machine ID is verified before it is passed in, so we do not need to verify it ourselves.
         let names = [];
@@ -48,6 +52,7 @@ class ToolManager {
         return names;
     }
 
+    // Clear machine attribute
     freeTools(toolIDArray) {
         let names = [];
         toolIDArray.forEach(tid => {

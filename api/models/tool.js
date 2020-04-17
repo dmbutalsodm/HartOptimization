@@ -28,7 +28,9 @@ const tools = db.define('tools', {
 
 db.sync();
 
+// This table holds tools and their attributes, and the machine they are currentlky in.
 module.exports = {
+    // Tools are cached in memory, so this cache must be rebuilt on launch.
     async buildToolDatabase() {
         const toolManager = require('../objects/tool/ToolManager.js')
         return tools.findAll().then(rows => {
@@ -40,6 +42,7 @@ module.exports = {
         })
     },
 
+    // Insert a new tool into the database.
     insertTool(tool) {
         for(const tag of Object.keys(tool.attributes)) {
             tools.create({
@@ -51,6 +54,7 @@ module.exports = {
         }
     },
 
+    // Add a tool to a machine. In the db, this means populating the 'machine' value.
     insertToolIntoMachine(toolID, machineID) {
         return tools.findAll({
             where: {
@@ -65,6 +69,7 @@ module.exports = {
         })
     },
 
+    // Opposite of aboove.
     freeTool(toolID) {
         return tools.update({
             machine: null

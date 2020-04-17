@@ -3,6 +3,8 @@ const Database = require('../db.js');
 
 const db = Database.db;
 
+
+// This table holds all template jobs, which can be instantiated to active jobs.
 const job = db.define('jobs', {
 	jobId: {
         type: DataTypes.STRING, // Dual primary key :) 
@@ -25,6 +27,7 @@ const job = db.define('jobs', {
 db.sync();
 
 module.exports = {
+    // Add a new template job
     addNewEmptyJob(jobName, jobId) {
         return job.create({
             jobId: jobId,
@@ -32,6 +35,7 @@ module.exports = {
         });
     },
 
+    // For duplicate checking.
     jobNameExists(jobName) {
         return job.findOne({
             where: {

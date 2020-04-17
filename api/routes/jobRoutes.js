@@ -23,6 +23,8 @@ module.exports = {
                 if (!toolManager.getTool(m)) passing = false;
             })
             if (!passing) return res.json({status: "error", message: "An invalid tool ID was provided."});
+
+            // All arguments valid, create the job.
             jobManager.createNewJob(req.body.name, req.body.machines, req.body.tools);
             return res.json({status: "ok", message: "The empty job was added to the database. It can now be instantiated."})
         })

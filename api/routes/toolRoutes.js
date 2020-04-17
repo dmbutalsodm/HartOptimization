@@ -4,7 +4,7 @@ const toolDB = require('../models/tool.js');
 module.exports = {
     registerToolPaths: (app) => {
         app.get('/api/', (req, res) => {
-            res.send("This is the API landing.");
+            res.send("pong!");
             return;
         })
         
@@ -16,6 +16,7 @@ module.exports = {
             res.json(toolManager.getTool(req.params.id));
         })
         
+        // Add a new tool to the database
         app.post('/api/tools/', (req, res) => {
             if (!req.body.name) return res.json({status: "error", message: "The 'name' field is required in the request body."});
             let toolName = req.body.name // separate variable because tool deletes toolattributes.id
@@ -27,6 +28,7 @@ module.exports = {
             return res.json({status: "ok", message: `The tool with the name '${toolName}' has been added`}) 
         })
 
+        // Remove tools from their respective machines.
         app.post('/api/tools/freeTools', (req, res) => {
             if (!req.body.tools  || !req.body.tools.length) return res.json({status: "error", message: "Invalid tool list."});
             let names = toolManager.freeTools(req.body.tools);

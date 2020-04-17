@@ -12,6 +12,7 @@ module.exports = {
             res.json(machineManager.getMachine(req.params.id));
         })
         
+        // Add a machine to the db
         app.post('/api/machines/', (req, res) => {
             if (!req.body.name) return res.json({status: "error", message: "The 'name' field is required in the request body."});
             let machineName = req.body.name // separate variable because machine deletes machineattributes.id
@@ -23,6 +24,7 @@ module.exports = {
             return res.json({status: "ok", message: `The machine with the name '${machineName}' has been added`}) 
         })
 
+        // Put tools into a machine.
         app.post('/api/machines/:id/addTools', (req, res) => {
             const selectedMachine = machineManager.getMachine(req.params.id);
             if (!selectedMachine) return res.json({status: "error", message: "There is no machine by the id provided."});

@@ -1,5 +1,6 @@
 const Uuid = require('../UuidGenerator.js');
 
+// Represents a physical machine.
 module.exports = class Machine {
     attributes = {};
     id;
