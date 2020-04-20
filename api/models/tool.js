@@ -24,7 +24,7 @@ const tools = db.define('tools', {
     units: {
         type: DataTypes.STRING,
     }
-});
+}, {timestamps: false});
 
 db.sync();
 

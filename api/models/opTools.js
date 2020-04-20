@@ -15,7 +15,7 @@ const opTools = db.define('opTools', {
         allowNull: false,
         primaryKey: true
     },
-});
+}, {timestamps: false});
 
 db.sync();
 

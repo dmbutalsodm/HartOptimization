@@ -36,7 +36,7 @@ const opTimes = db.define('opTimes', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-});
+}, {timestamps: false});
 
 db.sync();
 

@@ -16,7 +16,7 @@ const ops = db.define('ops', {
     parentPartId:        { type: DataTypes.STRING,  primaryKey: true},
     opName:              { type: DataTypes.STRING,  allowNull: false},
     intervals:           { type: DataTypes.INTEGER, allowNull: false},
-});
+}, {timestamps: false});
 
 db.sync();
 

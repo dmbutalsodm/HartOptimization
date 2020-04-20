@@ -15,7 +15,7 @@ const opMachines = db.define('opMachines', {
         allowNull: false,
         primaryKey: true
     },
-});
+}, {timestamps: false});
 
 db.sync();
 

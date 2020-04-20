@@ -13,7 +13,7 @@ const parts = db.define('parts', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-});
+}, {timestamps: false});
 
 db.sync();
 

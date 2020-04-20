@@ -19,7 +19,7 @@ const machines = db.define('machines', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-});
+}, {timestamps: false});
 
 db.sync();
 
