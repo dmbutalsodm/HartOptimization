@@ -26,5 +26,11 @@ module.exports = {
             opId: opId,
             toolId: toolId
         });
+    },
+
+    async getOpTools(opId) {
+        return opTools.findAll({where: {opId: opId}}).then(row => {
+            return row.map(r => r.get().toolId);
+        });
     }
 }

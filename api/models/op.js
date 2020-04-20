@@ -4,44 +4,54 @@ const Database = require('../db.js');
 const db = Database.db;
 
 
-// This table holds all template ops, which can be instantiated to active ops.
-const op = db.define('ops', {
+// This table holds all ops of parts. The tooling information is held in opTools, the machine requirements are in opMachines.
+const ops = db.define('ops', {
 	opId: {
         type: DataTypes.STRING, // Dual primary key :) 
         allowNull: false,
         primaryKey: true
     },
-    partId:              { type: DataTypes.STRING, allowNull: true /** BUT MAKE FALSE LATER */ , primaryKey: false},
-    opName:              { type: DataTypes.STRING, allowNull: false },
-    activeMachine:       { type: DataTypes.STRING  },
-    startDate:           { type: DataTypes.STRING  },
-    dueDate:             { type: DataTypes.STRING  },
-    possibleDays:        { type: DataTypes.INTEGER },
-    partCount:           { type: DataTypes.INTEGER },
-    minPartsPerDay:      { type: DataTypes.INTEGER },
-    enteredPartsPerDay:  { type: DataTypes.INTEGER },
-    setupDays:           { type: DataTypes.INTEGER },
-    projectedFinishDays: { type: DataTypes.INTEGER },
-    projectedFinishDate: { type: DataTypes.STRING  },
+    // Opcode is an external value that is used when defining the process of a part
+    opCode:              { type: DataTypes.INTEGER, primaryKey: true},
+    parentPartId:        { type: DataTypes.STRING,  primaryKey: true},
+    opName:              { type: DataTypes.STRING,  allowNull: false},
+    intervals:           { type: DataTypes.INTEGER, allowNull: false},
 });
-           
+
 db.sync();
 
 module.exports = {
     // Add a new template op
-    addNewEmptyOp(opName, opId) {
-        return op.create({
+    addNewOp(opName, opId, opCode, parentPart, opIntervals) {
+        return ops.create({
             opId: opId,
-            opName: opName
+            opCode: opCode,
+            opName: opName,
+            parentPartId: parentPart,
+            intervals: opIntervals
         });
     },
 
     // For duplicate checking.
     async opNameExists(opName) {
-        return op.findOne({
+        return ops.findOne({
             where: {
                 opName: opName
             }
         }).then(modelOrNull => !!modelOrNull);
+    },
+
+    async getPartOps(partId) {
+        const opMachines = require('./opMachines');
+        const opTools    = require('./opTools');
+        return ops.findAll({where: {parentPartId: partId}}).then(async rows => {
+            rows = rows.map(r => r.get());
+            for (r of rows) {
+                r.machines = await opMachines.getOpMachines(r.opId);
+                r.tools    = await opTools.getOpTools(r.opId);
+            }
+            return rows;
+        })
+
     }
 }

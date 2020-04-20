@@ -21,10 +21,16 @@ db.sync();
 
 module.exports = {
     // Add row delcaring OP can be performed on MACHINE
-    addOpMachine(opId, machineId) {
+    async addOpMachine(opId, machineId) {
         return opMachines.upsert({
             opId: opId,
             machineId: machineId
         });
+    },
+
+    async getOpMachines(opId) {
+        return opMachines.findAll({where: {opId: opId}}).then(row => {
+            return row.map(r => r.get().machineId);
+        })
     }
 }

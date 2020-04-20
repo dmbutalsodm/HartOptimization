@@ -47,9 +47,24 @@ Machine Manager is a singleton that holds all the machines, and takes care of va
 OpManager is a type that interfaces with the database to coordinate op information.
 
 ## Op Endpoints
-POST /api/ops/create  
+POST /api/ops  
 Creates an op that can be performed on a machine.
 Takes 3 parameters in its post body.  
 * name: The name of the op. 
+* opCode: the internal code for the op.
 * tools: An array of the Tool IDs that this op needs to complete.
 * machines: An array of the Machine IDs that are capable of completing this op.
+* part: The part that this op belongs to.
+* intervals: the amount of 15-minute intervals the op takes.
+
+## Part 
+Parts are groupings of ops required to produce a physical product.
+
+## Part endpoints
+GET /api/parts  
+Returns a collection of all the parts that are in the system. Includes the part details, as well as each op required to make the part,
+and the machines and tools that the particular op needs.
+
+GET /api/parts/:id  
+Returns the details for a specific part, including the part details, as well as each op required to make the part,
+and the machines and tools that the particular op needs.

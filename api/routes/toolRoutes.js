@@ -19,13 +19,18 @@ module.exports = {
         // Add a new tool to the database
         app.post('/api/tools/', (req, res) => {
             if (!req.body.name) return res.json({status: "error", message: "The 'name' field is required in the request body."});
+            if (!req.body.pockets) return res.json({status: "error", message: "The 'pockets' field is required in the request body."});
+            if (!parseInt(req.body.pockets)) return res.json({status: "error", message: "The 'pockets' field is required to be an integer"});
+            if (!(parseInt(req.body.pockets) > 0)) return res.json({status: "error", message: "The 'pockets' field is required to be an integer greater than 0"});
+            
             let toolName = req.body.name // separate variable because tool deletes toolattributes.id
+            let newT;
             try {
-                toolManager.addTool(req.body);
+                newT = toolManager.addTool(req.body);
             } catch (e) {
                 return res.json({status: "error", message: e.message})
             }
-            return res.json({status: "ok", message: `The tool with the name '${toolName}' has been added`}) 
+            return res.json({status: "ok", message: `The tool with the name '${toolName}' has been added`, id: newT.id}) 
         })
 
         // Remove tools from their respective machines.

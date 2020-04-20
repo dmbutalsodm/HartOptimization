@@ -16,12 +16,13 @@ module.exports = {
         app.post('/api/machines/', (req, res) => {
             if (!req.body.name) return res.json({status: "error", message: "The 'name' field is required in the request body."});
             let machineName = req.body.name // separate variable because machine deletes machineattributes.id
+            let newMac;
             try {
-                machineManager.addMachine(req.body);
+                newMac = machineManager.addMachine(req.body);
             } catch (e) {
                 return res.json({status: "error", message: e.message})
             }
-            return res.json({status: "ok", message: `The machine with the name '${machineName}' has been added`}) 
+            return res.json({status: "ok", message: `The machine with the name '${machineName}' has been added`, id: newMac.id}) 
         })
 
         // Put tools into a machine.
