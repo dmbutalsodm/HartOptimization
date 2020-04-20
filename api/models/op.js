@@ -50,6 +50,7 @@ module.exports = {
                 r.machines = await opMachines.getOpMachines(r.opId);
                 r.tools    = await opTools.getOpTools(r.opId);
             }
+            rows.sort((a, b) => a.opCode - b.opCode);
             return rows;
         })
 

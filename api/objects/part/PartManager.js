@@ -10,6 +10,14 @@ class PartManager {
     async partExists(partId) {
         return partDB.partExists(partId);
     }
+
+    async getAllPartIds() {
+        return partDB.getAllPartIds();
+    }
+
+    async getPart(id) {
+        return partDB.getPart(id);
+    }
 }
 
 module.exports = new PartManager();

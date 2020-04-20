@@ -33,7 +33,7 @@ module.exports = {
             if (!await partManager.partExists(req.body.part)) return res.json({status: "error", message: "An invalid parent part ID was provided."});
 
             // All arguments valid, create the op.
-            return opManager.createNewOp(req.body.name, req.body.opCode, req.body.machines, req.body.tools, req.body.part, req.intervals).then(id => {
+            return opManager.createNewOp(req.body.name, req.body.opCode, req.body.machines, req.body.tools, req.body.part, req.body.intervals).then(id => {
                 return res.json({status: "ok", message: `The op was added to the the part ${req.body.part}`, id: id}); 
             })
             
