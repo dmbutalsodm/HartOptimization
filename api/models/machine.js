@@ -33,7 +33,6 @@ module.exports = {
                 const r = row.get();
                 machineManager.getOrCreateMachine(r.id).attributes[r.tag] = r.value;
             });
-            console.log(machineManager.machines);
         })
     },
 

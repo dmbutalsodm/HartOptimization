@@ -38,7 +38,6 @@ module.exports = {
                 const r = row.get();
                 toolManager.getOrCreateTool(r.id, r.machine).attributes[r.tag] = r.value;
             });
-            console.log(toolManager.tools);
         })
     },
 

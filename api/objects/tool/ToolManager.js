@@ -38,7 +38,7 @@ class ToolManager {
     }
 
     // Populates the machine attribute with the machine the tool is in. 
-    assignToolsToMachine(machineID, toolIDArray) {
+    assignToolsToMachine(machineId, toolIDArray) {
         // Machine ID is verified before it is passed in, so we do not need to verify it ourselves.
         let names = [];
         toolIDArray.forEach(tid => {
@@ -46,7 +46,8 @@ class ToolManager {
             let tTest = this.getTool(tid)
             if (tTest) {
                 names.push(tTest.attributes.name);
-                toolDB.insertToolIntoMachine(tid, machineID);
+                tTest.machine = machineId
+                toolDB.insertToolIntoMachine(tid, machineId);
             }
         });
         return names;

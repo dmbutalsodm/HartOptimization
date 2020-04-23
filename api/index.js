@@ -6,6 +6,12 @@ const secrets = require('./secrets.js')
 const db = require('./db.js');
 
 // Once connected to the db...
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json())
+
+
 db.start().then(async () => {
     // Build caches then register routes
     require('./models/tool').buildToolDatabase()
@@ -22,14 +28,11 @@ db.start().then(async () => {
 // For debugging messages on errors
 app.set('env', secrets.DEV_OR_PROD == "prod" ? "production" : "dev")
 
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(bodyParser.json())
-
 // So the website can access the API without CORS errors.
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://localhost");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     next();
 })
 
