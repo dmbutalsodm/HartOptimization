@@ -55,6 +55,15 @@ app.get('/machines/:id/tools', async (req, res) => {
     res.render('./machines/tools.hbs', {machine, tools})
 })
 
+app.get('/machines/:id/attributes', async (req, res) => {
+    let machine = await fetch("http://localhost:3000/api/machines/" + req.params.id).then(r => r.json());
+    res.render('./machines/attributes.hbs', {machine});
+});
+
+app.get('/machines/add', async (req, res) => {
+    res.render('./machines/add.hbs')
+})
+
 app.listen(80, () => {
     console.log("Listening on port 80");
 })

@@ -1,1 +1,50 @@
-// 
+<div id="maincontainer">
+    <strong>Adding a new machine:</strong>
+    <span id="namereq">Name is the only required field, <span style="font-size: 12pt">but you can add any additional info you would like.</span></span>
+    <span>Any pair with either field blank will be ignored.</span>
+    <img src="/images/machine.png" style="margin: 5px; width: 100px"/>
+    <div id="kvpcontainer" action="http://localhost:3000/machines">
+        {{>keyvaluepair initialKeyValue="name"}}
+    </div>
+    <button style="margin: 5px 0 5px 0" class="button is-info" onclick="addBlankAttribute()">Add another attribute</button>
+    <button style="margin: 5px 0 5px 0" class="button is-info" onclick="submitForm()">Save this machine</button>
+</div>
+
+<style>
+    #maincontainer {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #kvpcontainer > * {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+</style>
+
+<script>
+    const kvpraw = `<div class="keyvaluepair-partial-kvp-container"><input type="text"placeholder="key"/><span><strong> | </strong></span><input type="text"placeholder="value"/></div>`
+    function addBlankAttribute() {
+        document.querySelector("#kvpcontainer").insertAdjacentHTML("beforeend", kvpraw);
+    }
+
+    function submitForm() {
+        const postBody = {};
+        document.querySelectorAll(".keyvaluepair-partial-kvp-container").forEach(kvp => {
+            if (!kvp.children[0].value || !kvp.children[2].value) return;
+            postBody[kvp.children[0].value.replace(/\\\"\{\}\//g, "")] = kvp.children[2].value.replace(/\\\"\{\}\//g, "");
+        })
+        if (!postBody.name) {
+            let el = document.querySelector("#namereq")
+            if (!el.style.fontSize) el.style.fontSize = "12pt"
+            el.style.fontSize = `${parseInt(el.style.fontSize) + 2}pt`
+            return;
+        }
+
+        return axios.post("http://localhost:3000/api/machines/", postBody).then(() => {
+            window.location = "http://localhost/machines"
+        })
+    }
+</script>

@@ -1,13 +1,20 @@
 
-<div class="machinecard-holder columns">
+<div class="machinecard-holder columns is-multiline">
     {{#each this.machines}}
-        <div class="machinecard column">
+        <div class="machinecard column is-one-fifth">
             <img style="width:40%"  src="/images/machine.png" />
             <span style="text-align: center;">{{attributes.name}}</span>
             <span style="text-align: center; font-size: 10px">ID: {{id}}</span>
-            <a class="button is-info" href="machines/{{id}}/tools">Tools</a>
+            <div class="field is-grouped">
+                <a class="machinecardbutton button is-info" href="machines/{{id}}/tools">Tools</a>
+                <a class="machinecardbutton button is-info" href="machines/{{id}}/attributes">Info</a>
+            </div>
         </div>
     {{/each}}
+    <div class="machinecard column is-one-fifth">
+            <a class="button is-info" href="machines/add"><strong>+</strong></a>
+            <span style="text-align: center;">Add a new machine.</span>
+    </div>
 </div>
 
 <style>
@@ -23,5 +30,11 @@
 
     .machinecard-holder {
         justify-content: center;
+        width: 80%;
+    }
+
+    .machinecardbutton {
+        margin-left: 2px;
+        margin-right: 2px;
     }
 </style>
