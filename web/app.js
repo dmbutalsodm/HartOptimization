@@ -64,6 +64,21 @@ app.get('/machines/add', async (req, res) => {
     res.render('./machines/add.hbs')
 })
 
+app.get('/tools', async (req, res) => {
+    let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
+    let machines = await fetch("http://localhost:3000/api/machines/").then(r => r.json());
+    tools.forEach(t => {
+        if (t.machine) {
+            t.machine = (machines.find(m => m.id == t.machine)).attributes.name;
+        }
+    })
+    res.render('./tools/toolLibrary.hbs', {tools})
+})
+
+app.get('/tools/add', async (req, res) => {
+    res.render('./tools/add.hbs')
+})
+
 app.listen(80, () => {
     console.log("Listening on port 80");
 })

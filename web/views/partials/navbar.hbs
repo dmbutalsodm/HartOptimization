@@ -1,6 +1,6 @@
 <div>
     <button id="navbar-hide-button" class="button is-info" onclick="togglemenu()">Menu</button>
-    <div style="display: none" id="navbar-menu-container" class="columns is-centered">
+    <div style="display: none;" id="navbar-menu-container" class="columns is-centered">
         <div class="navbar-button-holder column"><a href="/" style="width:95%" class="is-info button">Home</a></div>
         <div class="navbar-button-holder column"><a href="/machines" style="width:95%" class="is-info button">Machines</a></div>
         <div class="navbar-button-holder column"><a href="/tools" style="width:95%" class="is-info button">Tools</a></div>
@@ -14,6 +14,10 @@
         top: 5px;
         left: 3px;
         margin-bottom: 5px;
+    }
+
+    #navbar-menu-container {
+            margin-bottom: 10px;
     }
 
     @media screen and (min-width: 769px) {

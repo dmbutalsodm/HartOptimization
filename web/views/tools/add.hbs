@@ -1,13 +1,14 @@
 <div id="maincontainer">
-    <strong>Adding a new machine:</strong>
-    <span id="namereq">Name is the only required field, <span style="font-size: 12pt">but you can add any additional info you would like.</span></span>
+    <strong>Adding a new tool:</strong>
+    <span id="namereq">Name and pockets are the only required fields, <span style="font-size: 12pt">but you can add any additional info you would like.</span></span>
     <span>Any pair with either field blank will be ignored.</span>
-    <img src="/images/machine.png" style="margin: 5px; width: 100px"/>
+    <img src="/images/tool.png" style="margin: 5px; width: 100px"/>
     <div id="kvpcontainer" action="http://localhost:3000/machines">
         {{>keyvaluepair initialKeyValue="name"}}
+        {{>keyvaluepair initialKeyValue="pockets"}}
     </div>
     <button style="margin: 5px 0 5px 0" class="button is-info" onclick="addBlankAttribute()">Add another attribute</button>
-    <button id="submitbutton" style="margin: 5px 0 5px 0" class="button is-info" onclick="submitForm()">Save this machine</button>
+    <button id="submitbutton" style="margin: 5px 0 5px 0" class="button is-info" onclick="submitForm()">Save this tool</button>
 </div>
 
 <style>
@@ -36,7 +37,7 @@
             if (!kvp.children[0].value || !kvp.children[2].value) return;
             postBody[kvp.children[0].value.replace(/\\\"\{\}\//g, "")] = kvp.children[2].value.replace(/\\\"\{\}\//g, "");
         })
-        if (!postBody.name) {
+        if (!postBody.name || !postBody.pockets) {
             let el = document.querySelector("#namereq")
             if (!el.style.fontSize) el.style.fontSize = "12pt"
             el.style.fontSize = `${parseInt(el.style.fontSize) + 2}pt`
@@ -46,13 +47,13 @@
         const subButton = document.querySelector("#submitbutton");
         subButton.setAttribute("onclick", null)
         subButton.classList.add("is-loading");
-        return axios.post("http://localhost:3000/api/machines/", postBody).then(() => {
+        return axios.post("http://localhost:3000/api/tools/", postBody).then(() => {
             setTimeout(() => {
                 subButton.textContent = "Success! Redirecting..."
                 subButton.classList.remove("is-info")
                 subButton.classList.remove("is-loading")
                 subButton.classList.add("is-success")
-                setTimeout(() => window.location = "http://localhost/machines", 1500)
+                setTimeout(() => window.location = "http://localhost/tools", 1500)
             }, 1500)
         })
     }

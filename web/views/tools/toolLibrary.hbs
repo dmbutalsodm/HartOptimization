@@ -1,0 +1,64 @@
+<div id="contentholder">
+    <img src="/images/tool.png" style="width:20%" />
+    <p><strong>Tool library</strong></p>
+    <input id="toolsearch" style="width: 80%" class="input" type="text" placeholder="Search for a tool.">
+    <a href="/tools/add" class="button is-info">Add tool</a>
+    <div id="toolbox">
+        {{#each this.tools}}
+            <div class="toolcard" id="{{id}}" searchstring="{{generateSearchString attributes}}{{#if machine}} machine: {{machine}}{{/if}}">
+                <p class="toolattributesprinted {{id}}">{{prettyStringifyObject attributes}}{{#if machine}} machine: {{machine}}{{/if}}</p>
+            </div>
+        {{/each}} 
+    </div>
+</div>
+
+<style>
+    .toolcard { 
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        min-height: 50px;
+        width: 100%;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+    
+    #contentholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70%
+    }
+
+    #contentholder > * {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    #toolbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+
+    #toolbox > * {
+        margin-bottom: 2px;
+        margin-top: 2px;
+    }
+</style>
+
+<script>
+    document.getElementById("toolsearch").addEventListener('input', (event) => {
+        let search = event.srcElement.value.trim();
+        if (!search) {
+            document.querySelectorAll(".toolcard").forEach(element => element.style.display = "flex");
+            return;
+        }
+        document.querySelectorAll(".toolcard").forEach(element => {
+                element.style.display = (element.getAttribute("searchstring").indexOf(search) == -1 ? "none" : "flex");
+        })
+        
+    })
+
+</script>
