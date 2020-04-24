@@ -3,6 +3,7 @@
     <p><strong>{{this.machine.attributes.name}}</strong></p>
     <img src="/images/machine.png" style="margin: 5px; width: 100px"/>
     <a style="margin: 0 3px 0 3px" class="button is-info" href="/machines">Go back to the machines page</a>
+    <span style="margin-top: 15px;">Field <strong>|</strong> Value</span>
     <div id="kvpcontainer" action="http://localhost:3000/machines"></div>
 </div>
 
@@ -22,7 +23,7 @@
 
 <script>
     function newKvpraw(key, value) {
-        return kvpraw = `<div class="keyvaluepair-partial-kvp-container"><input size=50 disabled value="${key}" type="text"placeholder="key"/><span><strong> | </strong></span><input size=50  disabled value="${value}" type="text"placeholder="value"/></div>`
+        return kvpraw = `<div class="keyvaluepair-partial-kvp-container"><input size=50 readonly value="${key}" type="text"placeholder="key"/><span><strong> | </strong></span><input size=50  readonly value="${value}" type="text"placeholder="value"/></div>`
     }
 
     axios.get("http://localhost:3000/api/machines/{{this.machine.id}}").then(r => {

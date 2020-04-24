@@ -7,7 +7,18 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Launch Web",
+            "skipFiles": [
+                "<node_internals>/**",
+                "${workspaceFolder}/api/node_modules/**/*.js",
+                "${workspaceFolder}/api/lib/**/*.js"
+            ],
+            "program": "${workspaceFolder}\\web\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Api",
             "skipFiles": [
                 "<node_internals>/**",
                 "${workspaceFolder}/api/node_modules/**/*.js",
