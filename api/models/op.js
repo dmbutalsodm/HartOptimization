@@ -54,5 +54,9 @@ module.exports = {
             return rows;
         })
 
+    },
+
+    async getOp(opId) {
+        return ops.findOne({where: {opId: opId}}).then(r =>r.get())
     }
 }

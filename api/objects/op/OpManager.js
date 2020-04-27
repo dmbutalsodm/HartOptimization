@@ -31,6 +31,22 @@ class OpManager {
     async opNameExists(opName) {
         return opDB.opNameExists(opName);
     }
+
+    async updateOpTools(opId, toDelete, toAdd) {
+        return opToolsDB.updateOpTools(opId, toDelete, toAdd);
+    }
+
+    async updateOpMachines(opId, toDelete, toAdd) {
+        return opToolsDB.updateOpMachines(opId, toDelete, toAdd);
+    }
+
+    async getOp(opId) {
+        const op = await opDB.getOp(opId);
+        op.machines = await opMachinesDB.getOpMachines(opId);
+        op.tools = await opToolsDB.getOpTools(opId);
+        return op;
+        
+    }
 }
 
 module.exports = new OpManager(); 

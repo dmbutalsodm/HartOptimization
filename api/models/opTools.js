@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const Op = Sequelize.Op;
 const Database = require('../db.js');
 
 const db = Database.db;
@@ -32,5 +33,30 @@ module.exports = {
         return opTools.findAll({where: {opId: opId}}).then(row => {
             return row.map(r => r.get().toolId);
         });
+    },
+
+    async updateOpTools(opId, toDelete, toAdd) {
+        if (toDelete.length) return opTools.destroy({where: {
+            opId: opId,
+            toolId: {
+                [Op.or]: toDelete
+            }
+        }}).then(() => {
+            toAdd.forEach(tool => {
+                opTools.create({
+                    opId: opId,
+                    toolId: tool
+                })
+            })
+        })
+        else {
+            toAdd.forEach(tool => {
+                opTools.create({
+                    opId: opId,
+                    toolId: tool
+                })
+            })
+            return;
+        }
     }
 }

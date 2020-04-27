@@ -6,7 +6,8 @@
     <div id="opbox">
         {{#each this.part.ops}}
             <div class="opcard box" style="width:80%">
-                <p class="title is-4">Op {{opCode}}</p>
+                <p class="title is-4">Op {{opCode}} - {{opName}}</p>
+                <p class="subtitle is-6">Completion time - {{intervalsToTime intervals}}</p>
                 <div class="machinetagcontainer" style="margin-bottom: 20px">
                     <p>Can be done on these machines:</p>
                     <div class="tags">

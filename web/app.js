@@ -25,6 +25,15 @@ app.engine('.hbs', exphbs({
                 retString += `${key}: ${obj[key]} `;
             }
             return retString;
+        },
+        intervalsToTime(intervals) {
+            intervals = parseInt(intervals);
+            let retString = "";
+            if (intervals > 4) retString += `${Math.floor(intervals / 4)} hours`
+            if (retString.length && intervals % 4) retString += ", "
+            if (intervals % 4) retString += `${(intervals % 4) * 15} minutes`
+            retString += "."
+            return retString;
         }
     }
 
@@ -79,17 +88,15 @@ app.get('/parts', async (req, res) => {
 })
 
 app.get('/parts/:id', async (req, res) => {
-    const [parts, tools, machines] = await Promise.all([
-        fetch("http://localhost:3000/api/parts").then(r => r.json()),
+    const [part, tools, machines] = await Promise.all([
+        fetch("http://localhost:3000/api/parts/" + req.params.id).then(r => r.json()),
         fetch("http://localhost:3000/api/tools").then(r => r.json()),
         fetch("http://localhost:3000/api/machines/").then(r => r.json())
     ])
-    const part = parts.find(x => x.partId == req.params.id);
     part.ops.forEach(o => {
         o.machines.forEach((om, i) => o.machines[i] = machines.find(m => om == m.id).attributes.name)
         o.tools.forEach((ot, i) => o.tools[i] = tools.find(t => ot == t.id).attributes.name)
     })
-    console.log(part.ops[0]);
     res.render('./parts/part.hbs', {part})
 })
 
@@ -98,7 +105,9 @@ app.get('/parts/:partId/:opId/machines', async (req, res) => {
 })
 
 app.get('/parts/:partId/:opId/tools', async (req, res) => {
-
+    let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
+    let op = (await fetch("http://localhost:3000/api/parts/" + req.params.partId).then(r => r.json())).ops.find(o => o.opId == req.params.opId);
+    res.render('./parts/optool.hbs', {tools, op})
 })
 
 app.listen(80, () => console.log("Listening on port 80"))

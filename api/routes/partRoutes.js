@@ -12,7 +12,7 @@ module.exports = {
 
         app.get('/api/parts/:id', (req, res) => {
             return Promise.all([opDB.getPartOps(req.params.id), partManager.getPart(req.params.id)]).then(values => {
-                res.json({id: req.params.id, name: values[1].partName, ops: values[0]});
+                res.json({partId: req.params.id, name: values[1].partName, ops: values[0]});
             })
         });
 

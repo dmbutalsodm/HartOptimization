@@ -38,5 +38,29 @@ module.exports = {
             })
             
         })
+
+        app.post('/api/ops/updatetools', (req, res) => {
+            if (!req.body.opId)                            return res.json({status: "error", message: "No op id was present."})
+            if (!req.body.toAdd && !req.body.toDelete)   return res.json({status: "error", message: "No valid tool lists were provided."});
+
+            return opManager.updateOpTools(req.body.opId, req.body.toDelete || [], req.body.toAdd || []).then(() => {
+                res.json({status: "ok", message: "The op was updated."});
+            })
+        })
+
+        app.post('/api/ops/updatemachines', (req, res) => {
+            if (!req.body.opId)                            return res.json({status: "error", message: "No op id was present."})
+            if (!req.body.toAdd && !req.body.toDelete)   return res.json({status: "error", message: "No valid tool lists were provided."});
+
+            return opManager.updateOpMachines(req.body.opId, req.body.toDelete || [], req.body.toAdd || []).then(() => {
+                res.json({status: "ok", message: "The op was updated."});
+            })
+        })
+
+        app.get('/api/ops/:id', (req, res) => {
+            opManager.getOp(req.params.id).then(r => {
+                res.json(r);
+            })
+        })
     }
 }

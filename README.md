@@ -57,6 +57,20 @@ Takes 3 parameters in its post body.
 * part: The part that this op belongs to.
 * intervals: the amount of 15-minute intervals the op takes.
 
+POST /api/ops/updatemachines  
+Updates the machines that can complete a specific op.  
+Takes 3 parameters:  
+* opId: The op ID to update.
+* toAdd: An array containing the machine IDs that will be added to the op.
+* toDelete: An array containing the machine IDs that will be removed from the op.
+
+POST /api/ops/updatetools  
+Updates the tools that can complete a specific op.  
+Takes 3 parameters:  
+* opId: The op ID to update.
+* toAdd: An array containing the tool IDs that will be added to the op.
+* toDelete: An array containing the tool IDs that will be removed from the op.
+
 ## Part 
 Parts are groupings of ops required to produce a physical product.
 

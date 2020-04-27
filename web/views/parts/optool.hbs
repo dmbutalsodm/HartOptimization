@@ -1,10 +1,10 @@
 <div id="contentholder">
-    <img src="/images/machine.png" style="width:20%" />
-    <span>{{this.machine.attributes.name}}</span>
-    <input id="toolsearch" style="width: 80%" class="input" type="text" placeholder="Search for a tool.">
-    <span style="width: 80%; text-align:center;"><strong>Check boxes to insert the tool into the machine. Click the button below to save.</strong></span>
-    <span style="width: 80%; color: #990000; text-align:center;">Tools in red are in another machine. Inserting them into this machine will transfer them.</span>
+    <img src="/images/op.png" style="width:20%" />
+    <span class="title is-4" style="margin: 5px 0 5px 0;">Op {{this.op.opCode}} - {{this.op.opName}}</span>
+    <span style="width: 80%; text-align:center;"><strong>Check boxes of the tools that this op requires to complete. Click the button below to save.</strong></span>
+    <a href="/parts/{{this.op.parentPartId}}" class="button is-info">Back to part</a>
     <button class="button is-success" onclick="saveChanges(this)">Save changes</button>
+    <input id="toolsearch" style="width: 80%" class="input" type="text" placeholder="Search for a tool.">
     <div id="toolbox">
         {{#each this.tools}}
             <div class="toolcard box" id="{{id}}" searchstring="{{generateSearchString attributes}}">
@@ -28,7 +28,6 @@
         min-height: 50px;
         width: 100%;
         border: 1px solid rgb(201, 201, 201);
-        border-radius: 5px;
     }
     
     #contentholder {
@@ -56,20 +55,11 @@
 </style>
 
 <script>
-    
-    axios.get('http://localhost:3000/api/tools').then(async r => {
-        const machines = (await axios.get('http://localhost:3000/api/machines')).data
-        r.data.forEach(tool => {
-            if (tool.machine == "{{this.machine.id}}") {
-                document.querySelector(`[type="checkbox"][toolname="${tool.id}"]`).checked = true;
-            }
-            if (tool.machine != "{{this.machine.id}}" && tool.machine != null) {
-                let text = document.querySelector(".toolattributesprinted." + tool.id)
-                text.style.color = "#990000";
-                text.textContent += "machine: " + (machines.find(m => m.id == tool.machine)).attributes.name
-            }
+    axios.get('http://localhost:3000/api/ops/{{this.op.opId}}').then(r => {
+        r.data.tools.forEach(t => {
+            document.querySelector(`[toolname=${t}]`).checked = true;
         })
-    });
+    })
 
     document.getElementById("toolsearch").addEventListener('input', (event) => {
         let search = event.srcElement.value.trim();
@@ -92,12 +82,11 @@
         setTimeout(() => a.classList.remove("is-loading"), 250 + Math.floor(Math.random() * 500));
 
         let toAdd = [];
-        let toFree = [];
+        let toDelete = [];
         let changed = document.querySelectorAll('[type="checkbox"][changed="true"]').forEach(box => {
-            box.checked ? toAdd.push(box.getAttribute("toolname")) : toFree.push(box.getAttribute("toolname"));
+            box.checked ? toAdd.push(box.getAttribute("toolname")) : toDelete.push(box.getAttribute("toolname"));
         })
-        if (toAdd.length) axios.post("http://localhost:3000/api/machines/{{this.machine.id}}/addTools", { tools: toAdd })
-        if(toFree.length) axios.post("http://localhost:3000/api/tools/freeTools", { tools: toFree })
-
+        
+        if (toAdd.length || toDelete.length) axios.post("http://localhost:3000/api/ops/updatetools", {opId: `{{this.op.opId}}`, toAdd, toDelete});
     }
 </script>

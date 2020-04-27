@@ -32,5 +32,21 @@ module.exports = {
         return opMachines.findAll({where: {opId: opId}}).then(row => {
             return row.map(r => r.get().machineId);
         })
+    },
+
+    async updateOpMachines(opId, toDelete, toAdd) {
+        return opMachines.destroy({where: {
+            opId: opId,
+            machinelId: {
+                [Op.or]: toDelete
+            }
+        }}).then(() => {
+            toAdd.forEach(machine => {
+                opMachines.create({
+                    opId: opId,
+                    machineId: machine
+                })
+            })
+        })
     }
 }
