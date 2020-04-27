@@ -1,0 +1,62 @@
+<base href="/parts/{{this.part.partId}}/" />
+<div id="contentholder">
+    <img src="/images/part.png" style="width:20%" />
+    <p style="margin-bottom: 8px;"><strong>{{this.part.name}}</strong></p>
+    <a href="/parts/addOp" class="button is-info">Add new op</a>
+    <div id="opbox">
+        {{#each this.part.ops}}
+            <div class="opcard box" style="width:80%">
+                <p class="title is-4">Op {{opCode}}</p>
+                <div class="machinetagcontainer" style="margin-bottom: 20px">
+                    <p>Can be done on these machines:</p>
+                    <div class="tags">
+                        {{#each machines}}
+                            <div class="tag">{{this}}</div>
+                        {{/each}}
+                        <a href="{{opId}}/machines" class="tag button is-info">Add/remove machines</a>
+                    </div>
+                </div>
+                <div class="tooltagcontainer">
+                    <p>Needs these tools to be completed:</p>
+                    <div class="tags">
+                        {{#each tools}}
+                            <div class="tag">{{this}}</div>
+                        {{/each}}
+                        <a href="{{opId}}/tools" class="tag button is-info">Add/remove tools</a>
+                    </div>
+                </div>
+            </div>
+        {{/each}} 
+    </div>
+</div>
+
+<style>
+
+    a {
+        text-decoration: none !important;
+    }
+    
+    #contentholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70%
+    }
+
+    #contentholder > * {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    #opbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+
+    #opbox > * {
+        margin-bottom: 2px;
+        margin-top: 2px;
+    }
+</style>

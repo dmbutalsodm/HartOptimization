@@ -36,13 +36,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-    res.render('home')
-})
+app.get('/', (req, res) => res.render('home'))
 
 app.get('/machines', async (req, res) => {
     let machines = await fetch("http://localhost:3000/api/machines").then(r => r.json())
-    res.render('machines', {machines})
+    res.render('machines/machines.hbs', {machines})
 })
 
 app.get('/machines/:id/tools', async (req, res) => {
@@ -60,9 +58,7 @@ app.get('/machines/:id/attributes', async (req, res) => {
     res.render('./machines/attributes.hbs', {machine});
 });
 
-app.get('/machines/add', async (req, res) => {
-    res.render('./machines/add.hbs')
-})
+app.get('/machines/add', async (req, res) => res.render('./machines/add.hbs'))
 
 app.get('/tools', async (req, res) => {
     let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
@@ -75,10 +71,34 @@ app.get('/tools', async (req, res) => {
     res.render('./tools/toolLibrary.hbs', {tools})
 })
 
-app.get('/tools/add', async (req, res) => {
-    res.render('./tools/add.hbs')
+app.get('/tools/add', async (req, res) => res.render('./tools/add.hbs'))
+
+app.get('/parts', async (req, res) => {
+    let parts = await fetch("http://localhost:3000/api/parts").then(r => r.json())
+    res.render('./parts/partLibrary.hbs', {parts})
 })
 
-app.listen(80, () => {
-    console.log("Listening on port 80");
+app.get('/parts/:id', async (req, res) => {
+    const [parts, tools, machines] = await Promise.all([
+        fetch("http://localhost:3000/api/parts").then(r => r.json()),
+        fetch("http://localhost:3000/api/tools").then(r => r.json()),
+        fetch("http://localhost:3000/api/machines/").then(r => r.json())
+    ])
+    const part = parts.find(x => x.partId == req.params.id);
+    part.ops.forEach(o => {
+        o.machines.forEach((om, i) => o.machines[i] = machines.find(m => om == m.id).attributes.name)
+        o.tools.forEach((ot, i) => o.tools[i] = tools.find(t => ot == t.id).attributes.name)
+    })
+    console.log(part.ops[0]);
+    res.render('./parts/part.hbs', {part})
 })
+
+app.get('/parts/:partId/:opId/machines', async (req, res) => {
+
+})
+
+app.get('/parts/:partId/:opId/tools', async (req, res) => {
+
+})
+
+app.listen(80, () => console.log("Listening on port 80"))

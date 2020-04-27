@@ -18,9 +18,9 @@ module.exports = {
 
         app.get('/api/parts', (req, res) => {
             return partManager.getAllPartIds().then(async ids => {
-                let ret = {};
+                let ret = [];
                 for (id of ids) {
-                    ret[id] = {name: (await partManager.getPart(id)).partName, ops: await opDB.getPartOps(id)}
+                    ret.push({partId: id, name: (await partManager.getPart(id)).partName, ops: await opDB.getPartOps(id)})
                 }
                 res.json(ret);
             })

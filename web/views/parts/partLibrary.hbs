@@ -1,0 +1,69 @@
+<div id="contentholder">
+    <img src="/images/part.png" style="width:20%" />
+    <p><strong>Part library</strong></p>
+    <p>Click on any part to view the ops that make it up, or change other properties.</p>
+    <input id="partsearch" style="width: 80%" class="input" type="text" placeholder="Search for a part.">
+    <a href="/parts/add" class="button is-info">Add new part</a>
+    <div id="partbox">
+        {{#each this.parts}}
+            <div class="partcard" searchstring="name: {{name}} ops: {{ops.length}}">
+                <a href="/parts/{{partId}}" class="button partbutton">Name: {{name}}, ops: {{ops.length}}</a>
+            </div>
+        {{/each}} 
+    </div>
+</div>
+
+<style>
+    .partcard { 
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        min-height: 50px;
+        width: 100%;
+        border-radius: 5px;
+    }
+    
+    .partbutton {
+        width: 100%;
+        justify-content: left;
+    }
+    
+    #contentholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70%
+    }
+
+    #contentholder > * {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    #partbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+
+    #partbox > * {
+        margin-bottom: 2px;
+        margin-top: 2px;
+    }
+</style>
+
+<script>
+    document.getElementById("partsearch").addEventListener('input', (event) => {
+        let search = event.srcElement.value.trim();
+        if (!search) {
+            document.querySelectorAll(".partcard").forEach(element => element.style.display = "flex");
+            return;
+        }
+        document.querySelectorAll(".partcard").forEach(element => {
+                element.style.display = (element.getAttribute("searchstring").indexOf(search) == -1 ? "none" : "flex");
+        })
+        
+    })
+
+</script>

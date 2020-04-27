@@ -2,11 +2,11 @@
     <img src="/images/tool.png" style="width:20%" />
     <p><strong>Tool library</strong></p>
     <input id="toolsearch" style="width: 80%" class="input" type="text" placeholder="Search for a tool.">
-    <a href="/tools/add" class="button is-info">Add tool</a>
+    <a href="/tools/add" class="button is-info">Add new tool</a>
     <div id="toolbox">
         {{#each this.tools}}
             <div class="toolcard" id="{{id}}" searchstring="{{generateSearchString attributes}}{{#if machine}} machine: {{machine}}{{/if}}">
-                <p class="toolattributesprinted {{id}}">{{prettyStringifyObject attributes}}{{#if machine}} machine: {{machine}}{{/if}}</p>
+                <p class="toolattributesprinted {{id}}">{{prettyStringifyObject attributes}}{{#if machine}}<strong>machine: {{machine}}</strong>{{/if}}</p>
             </div>
         {{/each}} 
     </div>
