@@ -100,6 +100,11 @@ app.get('/parts/:id', async (req, res) => {
     res.render('./parts/part.hbs', {part})
 })
 
+app.get('/parts/:id/addOp', async (req, res) => {
+    const part = await fetch("http://localhost:3000/api/parts/" + req.params.id).then(r => r.json())
+    res.render('./parts/addOp.hbs', {part})
+})
+
 app.get('/parts/:partId/:opId/machines', async (req, res) => {
     let machines = await fetch("http://localhost:3000/api/machines/").then(r => r.json());
     let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))

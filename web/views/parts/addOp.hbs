@@ -1,0 +1,75 @@
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+<div class="contentholder" style="width: 60%;">
+    <img src="/images/op.png" style="width:15%; max-width: 160px;" />
+    <span class="title is-4" style="margin: 5px 0 5px 0;">Add op to part - {{this.part.name}}</span>
+    <p>Fill in the required details below, then click the add button at the bottom.</p>
+    
+    <form class="contentholder" id="opform" action="http://localhost:3000/api/ops" target="dummyframe" method="POST" >
+        <label for="name"><b>Name:</b></label>
+        <input class="input" type="text" placeholder="Name" name="name" required>
+
+        <label for="opCode"><b>Op code:</b></label>
+        <input class="input" type="number" placeholder="Op code" name="opCode" required>
+
+        <label for="hours"><b>Hours:</b></label>
+        <input id="hoursinput" class="input" type="number" placeholder="Hours" required>
+
+        <label for="minutes"><b>Minutes:</b></label>
+        <input id="minutesinput" class="slider is-fullwidth" step="15" min="0" max="45" value="0" type="range" oninput="updateTextInput(this.value);"/>
+        <p id="slideroutput">0</p>
+
+        <label for="part"><b>Part</b></label>
+        <input class="input" type="text" name="part" readonly value="{{this.part.partId}}">
+
+        <input id="hiddeninput" type="hidden" name="intervals" value=0 />
+
+        <button id="sub" type="submit" class="button is-info" onclick="subfunc(this)">Add op to part</button>
+        <a href="/parts/{{this.part.partId}}" class="button is-danger" style="margin-bottom: 3px;">Cancel op addition</a>
+    </form>
+</div>
+
+<style>
+    .contentholder {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    form > * {
+        margin: 3px 0 3px 0;
+    }
+
+    form > input {
+        width: 230px !important;
+    }
+
+    button:last-child {
+        margin-top: 10px;
+    }
+
+</style>
+
+<script>
+    function updateTextInput(val) {
+        document.getElementById('slideroutput').innerText=val; 
+    }
+
+    function subfunc(e) {
+        document.querySelector("#hiddeninput").value = (document.querySelector("#hoursinput").value * 4) + (document.querySelector("#minutesinput").value / 15);
+
+        document.querySelector("#opform").submit();
+
+        e.setAttribute("onclick", "");
+        e.classList.add("is-loading");
+        setTimeout(() => {
+            e.classList.remove("is-loading");
+            e.classList.remove("is-info");
+            e.classList.add("is-success");
+            e.textContent = "Success. Click again to return to the part, where you can add machines and tools."
+            e.setAttribute("onclick", `window.location.href="/parts/{{this.part.partId}}"`)
+        }, 750)
+
+        
+    }
+</script>

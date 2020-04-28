@@ -49,13 +49,14 @@ OpManager is a type that interfaces with the database to coordinate op informati
 ## Op Endpoints
 POST /api/ops  
 Creates an op that can be performed on a machine.
-Takes 3 parameters in its post body.  
+Takes up to 6 parameters in its post body.  
 * name: The name of the op. 
-* opCode: the internal code for the op.
-* tools: An array of the Tool IDs that this op needs to complete.
-* machines: An array of the Machine IDs that are capable of completing this op.
+* opCode: The code for the operation in the manufacturing process. Usually 2 digits.
 * part: The part that this op belongs to.
 * intervals: the amount of 15-minute intervals the op takes.
+* [optional] tools: An array of the Tool IDs that this op needs to complete.
+* [optional] machines: An array of the Machine IDs that are capable of completing this op.
+
 
 POST /api/ops/updatemachines  
 Updates the machines that can complete a specific op.  

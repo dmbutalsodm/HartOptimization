@@ -4,8 +4,8 @@
     <span>Any pair with either field blank will be ignored.</span>
     <img src="/images/tool.png" style="margin: 5px; width: 100px"/>
     <div id="kvpcontainer" action="http://localhost:3000/machines">
-        {{>keyvaluepair initialKeyValue="name"}}
-        {{>keyvaluepair initialKeyValue="pockets"}}
+        {{>keyvaluepair initialKeyValue="name" readonly="true"}}
+        {{>keyvaluepair initialKeyValue="pockets" readonly="true"}}
     </div>
     <button style="margin: 5px 0 5px 0" class="button is-info" onclick="addBlankAttribute()">Add another attribute</button>
     <button id="submitbutton" style="margin: 5px 0 5px 0" class="button is-info" onclick="submitForm()">Save this tool</button>
