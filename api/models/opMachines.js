@@ -1,4 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize');
+const Op = Sequelize.Op
 const Database = require('../db.js');
 
 const db = Database.db;
@@ -35,18 +36,27 @@ module.exports = {
     },
 
     async updateOpMachines(opId, toDelete, toAdd) {
-        return opMachines.destroy({where: {
+        if (toDelete.length) return opMachines.destroy({where: {
             opId: opId,
-            machinelId: {
+            machineId: {
                 [Op.or]: toDelete
             }
         }}).then(() => {
             toAdd.forEach(machine => {
-                opMachines.create({
+                opMachines.upsert({
                     opId: opId,
                     machineId: machine
                 })
             })
         })
+        else {
+            toAdd.forEach(machine => {
+                opMachines.upsert({
+                    opId: opId,
+                    machineId: machine
+                })
+            })
+            return;
+        }
     }
 }

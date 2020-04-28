@@ -37,7 +37,7 @@ class OpManager {
     }
 
     async updateOpMachines(opId, toDelete, toAdd) {
-        return opToolsDB.updateOpMachines(opId, toDelete, toAdd);
+        return opMachinesDB.updateOpMachines(opId, toDelete, toAdd);
     }
 
     async getOp(opId) {

@@ -43,7 +43,7 @@ module.exports = {
             }
         }}).then(() => {
             toAdd.forEach(tool => {
-                opTools.create({
+                opTools.upsert({
                     opId: opId,
                     toolId: tool
                 })
@@ -51,7 +51,7 @@ module.exports = {
         })
         else {
             toAdd.forEach(tool => {
-                opTools.create({
+                opTools.upsert({
                     opId: opId,
                     toolId: tool
                 })

@@ -36,7 +36,7 @@ module.exports = {
     },
 
     async getPart(id) {
-        return parts.findOne({where: {partId: id}}).then(r => r.get());
+        return parts.findOne({where: {partId: id}}).then(r => r ? r.get() : null);
     },
 
     async partExists(id) {

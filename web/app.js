@@ -101,13 +101,15 @@ app.get('/parts/:id', async (req, res) => {
 })
 
 app.get('/parts/:partId/:opId/machines', async (req, res) => {
-
+    let machines = await fetch("http://localhost:3000/api/machines/").then(r => r.json());
+    let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))
+    res.render('./parts/opMachines.hbs', {machines, op});
 })
 
 app.get('/parts/:partId/:opId/tools', async (req, res) => {
     let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
-    let op = (await fetch("http://localhost:3000/api/parts/" + req.params.partId).then(r => r.json())).ops.find(o => o.opId == req.params.opId);
-    res.render('./parts/optool.hbs', {tools, op})
+    let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))
+    res.render('./parts/opTools.hbs', {tools, op})
 })
 
 app.listen(80, () => console.log("Listening on port 80"))

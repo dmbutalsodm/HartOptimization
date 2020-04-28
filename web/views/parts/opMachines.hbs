@@ -1,0 +1,80 @@
+<div class="contentholder">
+    <img src="/images/op.png" style="width:15%; max-width: 180px;" />
+    <span class="title is-4" style="margin: 5px 0 5px 0;">Op {{this.op.opCode}} - {{this.op.opName}}</span>
+    <p>Select machines that are capable of carrying out this op, then click the save button below.</p>
+    <p STYLE="margin-bottom: 5px;;">Machines with a <span style="color: #88BBFF;">blue</span> background are selected for this op.</p>
+    <a href="/parts/{{this.op.parentPartId}}" class="button is-info" style="margin-bottom: 3px;">Back to part</a>
+    <button class="button is-success" onclick="saveChanges(this)">Save changes</button>
+    <div class="machinecard-holder columns is-multiline">
+        {{#each this.machines}}
+        <div class="machinecard column is-one-fifth" onclick="toggle(this)" selected="false" mid="{{id}}">
+            <img style="width:40%; user-select: none;" draggable="false" src="/images/machine.png" />
+            <span style="text-align: center;">{{attributes.name}}</span>
+            <span style="text-align: center; font-size: 10px">ID: {{id}}</span>
+            <div class="field is-grouped">
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<style>
+    .contentholder {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .machinecard {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid black;
+        border-radius: 5px;
+        margin: 3px;
+        transition: background-color 500ms ease-in-out;
+    }
+
+    .machinecard-holder {
+        justify-content: center;
+        width: 80%;
+        margin-top: 10px;
+    }
+</style>
+
+<script>
+    axios.get('http://localhost:3000/api/ops/{{this.op/opId}}').then(r => {
+        r.data.machines.forEach(m => {
+            document.querySelector(`[mid=${m}]`).setAttribute("selected", "true")
+            document.querySelector(`[mid=${m}]`).style.transitionDuration = "0ms";
+            document.querySelector(`[mid=${m}]`).style.backgroundColor = "#88BBFF";
+            setTimeout(() => document.querySelector(`[mid=${m}]`).style.transitionDuration = "500ms", 250)
+        })
+    })
+
+    function toggle(e) {
+        if (e.getAttribute("selected") == "false") {
+            e.style.backgroundColor = "#88BBFF"
+            e.setAttribute("selected", "true")
+            return;
+        } 
+        if (e.getAttribute("selected") == "true") {
+            e.style.backgroundColor = "#FFFFFF"
+            e.setAttribute("selected", "false")
+            return;
+        } 
+    }
+
+    function saveChanges(a) {
+        a.classList.add("is-loading");
+        setTimeout(() => a.classList.remove("is-loading"), 250 + Math.floor(Math.random() * 500));
+
+        let toAdd = Array.from(document.querySelectorAll('.machinecard[selected="true"]')).map(el => el.getAttribute("mid"))
+        let toDelete = Array.from(document.querySelectorAll('.machinecard[selected="false"]')).map(el => el.getAttribute("mid"))
+        console.log(toAdd, toDelete)
+        
+        axios.post("http://localhost:3000/api/ops/updatemachines", {opId: `{{this.op.opId}}`, toAdd, toDelete});
+    }
+</script>
