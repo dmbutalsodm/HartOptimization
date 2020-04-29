@@ -23,6 +23,8 @@ db.start().then(async () => {
     require('./routes/opRoutes.js').registerOpPaths(app);
 
     require('./routes/partRoutes.js').registerPartPaths(app);
+    
+    require('./routes/jobRoutes.js').registerPartPaths(app);
 })
 
 // For debugging messages on errors

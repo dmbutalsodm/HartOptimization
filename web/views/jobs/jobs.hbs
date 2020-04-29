@@ -1,0 +1,160 @@
+<base href="/jobs/" />
+<div id="contentholder">
+    <img src="/images/job.png" style="width:50%; max-width: 220px" />
+    <p style="margin-top: 8px;"><strong>Active jobs</strong></p>
+    <p>This is a list of all the active jobs in the system. Past due jobs are not shown.</p>
+    <p>Use the arrows to raise and lower priority.</p>
+    <a href="add/" class="button is-info">Add new job</a>
+    <div id="jobbox">
+        {{#each this.jobs}}
+            <div jobid="{{this.id}}" class="box flexorder" style="width:80%; order:{{subtract 10000 this.priority}}">
+                <div class="verticalsholder">
+                    <div class="prioritymeter">
+                        <i onclick="prioUp(this)" style="zoom:1.5" class='fa fa-arrow-circle-o-up'></i>
+                        <p style="text-align: center;">{{this.priority}}</p>
+                        <i onclick="prioDown(this)" style="zoom:1.5" class='fa fa-arrow-circle-o-down'></i>
+                    </div>
+                    <div class="jobinfoholder">
+                        <p class="title is-4">Job - {{this.name}}</p>
+                        <p class="subtitle is-6">{{dueDateToDateString this.dueDate}}</p>
+                        <div class="smalldetailsholder">
+                            <div>
+                                <p><strong>Part</strong></p>
+                                <p><a href="/parts/{{this.partId}}">{{this.partName}}</a></p>
+                            </div>
+                            <div>
+                                <p><strong>Quantity</strong></p>
+                                <p>{{this.partCount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/each}} 
+    </div>
+</div>
+
+<style>
+
+    .box:last-child {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .flexorder {
+        transition-property: order;
+        transition-duration: 750ms;
+        transition-delay: 250ms;
+    }
+
+    .smalldetailsholder {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+
+    .smalldetailsholder > * {
+        margin: 0 8px 0 8px;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+
+    .verticalsholder {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+    
+    .prioritymeter {
+        width: 5%;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        margin-right: 15px;
+    }
+
+    
+    .priorityCounter {
+        width: 15%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #contentholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70%
+    }
+
+    #contentholder > * {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    #jobbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+
+    .slideout {
+        animation: slideout 1s forwards ease-out;
+    }
+
+    @keyframes slideout {
+        0% {
+            position: relative;
+            left: 0;
+            opacity: 1;
+            max-height: 1000px;
+
+        }
+        100% {
+            position: relative;
+            left: 100%;
+            opacity: 0;
+            max-height: 0px;
+            padding: 0;
+            margin: 0;
+        }
+
+    }
+</style>
+
+<script>
+    let orderTimeout = {};
+
+    function prioUp(e) {
+        let jid = e.parentElement.parentElement.parentElement.getAttribute("jobid");
+        if (orderTimeout[jid]) clearTimeout(orderTimeout[jid]);
+        e.parentElement.children[1].innerText = parseInt(e.parentNode.children[1].innerText) + 1;
+        refreshUpdateTimer(e, jid)
+    }
+
+    function prioDown(e) {
+        let jid = e.parentElement.parentElement.parentElement.getAttribute("jobid");
+        if (orderTimeout[jid]) clearTimeout(orderTimeout[jid]);
+        e.parentElement.children[1].innerText = parseInt(e.parentNode.children[1].innerText) - 1;
+        refreshUpdateTimer(e, jid)
+    }
+
+    function refreshUpdateTimer(e, jid) {
+        orderTimeout[jid] = setTimeout(() => {
+            let pl = e.parentElement.parentElement.parentElement
+            pl.style.backgroundColor = "#D3D3D3";
+            setTimeout(() => pl.style.backgroundColor = "#FFFFFF", 750);
+            pl.style.order = 10000 - parseInt(e.parentNode.children[1].innerText);
+            axios.post('http://localhost:3000/api/jobs/' + jid + "/updatepriority", {
+                jobId: jid,
+                priority: parseInt(e.parentNode.children[1].innerText)
+            })
+            orderTimeout[jid] = null
+        }, 1000)
+    }
+</script>

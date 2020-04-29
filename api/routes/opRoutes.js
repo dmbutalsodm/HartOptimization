@@ -7,12 +7,12 @@ module.exports = {
     registerOpPaths: (app) => {
         app.post('/api/ops', async (req, res) => {
             // Verify arguments exist
-            if (!req.body.name      || !req.body.name.length)         return res.json({status: "error", message: "Job name is not present"})
-            if (!req.body.machines  || !req.body.machines.length)     req.body.machines = [];
-            if (!req.body.tools     || !req.body.tools.length)        req.body.tools    = [];
-            if (!req.body.part)                                       return res.json({status: "error", message: "Parent part is not present"})
-            if (!req.body.opCode    || !parseInt(req.body.opCode))    return res.json({status: "error", message: "Op code is not present"})
-            if (!req.body.intervals || !parseInt(req.body.intervals)) return res.json({status: "error", message: "Intervals is not present"})
+            if (!req.body.name      || !req.body.name.length)                                             return res.json({status: "error", message: "Job name is not present"})
+            if (!req.body.machines  || !req.body.machines.length)                                         req.body.machines = [];
+            if (!req.body.tools     || !req.body.tools.length)                                            req.body.tools    = [];
+            if (!req.body.part)                                                                           return res.json({status: "error", message: "Parent part is not present"})
+            if (!req.body.opCode    || (!parseInt(req.body.opCode) && parseInt(req.body.opCode) != 0))    return res.json({status: "error", message: "Op code is not present"})
+            if (!req.body.intervals || !parseInt(req.body.intervals))                                     return res.json({status: "error", message: "Intervals is not present"})
 
             req.body.opCode = parseInt(req.body.opCode);
             req.body.intervals = parseInt(req.body.intervals);

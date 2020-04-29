@@ -6,7 +6,7 @@
     
     <form class="contentholder" id="opform" action="http://localhost:3000/api/ops" target="dummyframe" method="POST" >
         <label for="name"><b>Name:</b></label>
-        <input class="input" type="text" placeholder="Name" name="name" required>
+        <input autocomplete="off" class="input" type="text" placeholder="Name" name="name" required>
 
         <label for="opCode"><b>Op code:</b></label>
         <input class="input" type="number" placeholder="Op code" name="opCode" required>
@@ -57,8 +57,6 @@
 
     function subfunc(e) {
         document.querySelector("#hiddeninput").value = (document.querySelector("#hoursinput").value * 4) + (document.querySelector("#minutesinput").value / 15);
-
-        document.querySelector("#opform").submit();
 
         e.setAttribute("onclick", "");
         e.classList.add("is-loading");

@@ -1,10 +1,11 @@
 <div>
     <button id="navbar-hide-button" class="button is-info" onclick="togglemenu()">Menu</button>
-    <div style="display: none;" id="navbar-menu-container" class="columns is-centered">
+    <div style="max-height: 0px; overflow: hidden" id="navbar-menu-container" class="columns is-centered">
         <div class="navbar-button-holder column"><a href="/" style="width:95%" class="is-info button">Home</a></div>
         <div class="navbar-button-holder column"><a href="/machines" style="width:95%" class="is-info button">Machines</a></div>
         <div class="navbar-button-holder column"><a href="/tools" style="width:95%" class="is-info button">Tools</a></div>
         <div class="navbar-button-holder column"><a href="/parts" style="width:95%" class="is-info button">Parts</a></div>
+        <div class="navbar-button-holder column"><a href="/jobs" style="width:95%" class="is-info button">Jobs</a></div>
         <div class="navbar-button-holder column"><a href="/scheduling" style="width:95%" class="is-info button">Scheduling</a></div>
     </div>
 </div>
@@ -17,7 +18,9 @@
     }
 
     #navbar-menu-container {
-            margin-bottom: 10px;
+        margin-bottom: 10px;
+        transition: max-height;
+        transition-duration: 750ms;
     }
 
     @media screen and (min-width: 769px) {
@@ -45,6 +48,6 @@
 <script>
     function togglemenu() {
         let t = document.getElementById("navbar-menu-container");
-        t.style.display = (t.style.display == "none" ? t.removeAttribute("style") : t.style.display = "none")
+        t.style.display = (t.style.maxHeight == "0px" ? t.style.maxHeight = "400px" : t.style.maxHeight = "0px")
     }
 </script>

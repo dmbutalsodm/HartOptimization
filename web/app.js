@@ -34,7 +34,12 @@ app.engine('.hbs', exphbs({
             if (intervals % 4) retString += `${(intervals % 4) * 15} minutes`
             retString += "."
             return retString;
-        }
+        },
+        dueDateToDateString(dateString) {
+            const dateObj = new Date(dateString);
+            return `Due ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days from today.`
+        },
+        subtract(a, b) {return a - b}
     }
 
 }))
@@ -115,6 +120,15 @@ app.get('/parts/:partId/:opId/tools', async (req, res) => {
     let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
     let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))
     res.render('./parts/opTools.hbs', {tools, op})
+})
+
+app.get('/jobs', async (req, res) => {
+    let jobs = await fetch("http://localhost:3000/api/jobs").then(r => r.json());
+    let parts = await fetch("http://localhost:3000/api/parts").then(r => r.json());
+    jobs.forEach(j => {
+        j.partName = parts.find(p => j.partId == p.partId).name
+    })
+    res.render('./jobs/jobs.hbs', {jobs});
 })
 
 app.listen(80, () => console.log("Listening on port 80"))

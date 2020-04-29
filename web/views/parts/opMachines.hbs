@@ -72,9 +72,7 @@
         setTimeout(() => a.classList.remove("is-loading"), 250 + Math.floor(Math.random() * 500));
 
         let toAdd = Array.from(document.querySelectorAll('.machinecard[selected="true"]')).map(el => el.getAttribute("mid"))
-        let toDelete = Array.from(document.querySelectorAll('.machinecard[selected="false"]')).map(el => el.getAttribute("mid"))
-        console.log(toAdd, toDelete)
-        
+        let toDelete = Array.from(document.querySelectorAll('.machinecard[selected="false"]')).map(el => el.getAttribute("mid"))        
         axios.post("http://localhost:3000/api/ops/updatemachines", {opId: `{{this.op.opId}}`, toAdd, toDelete});
     }
 </script>
