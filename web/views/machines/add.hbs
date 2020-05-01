@@ -3,7 +3,7 @@
     <span id="namereq">Name is the only required field, <span style="font-size: 12pt">but you can add any additional info you would like.</span></span>
     <span>Any pair with either field blank will be ignored.</span>
     <img src="/images/machine.png" style="margin: 5px; width: 100px"/>
-    <div id="kvpcontainer" action="http://localhost:3000/machines">
+    <div id="kvpcontainer">
         {{>keyvaluepair initialKeyValue="name"}}
     </div>
     <button style="margin: 5px 0 5px 0" class="button is-info" onclick="addBlankAttribute()">Add another attribute</button>
@@ -25,7 +25,8 @@
 </style>
 
 <script>
-    const kvpraw = `<div class="keyvaluepair-partial-kvp-container"><input type="text"placeholder="key"/><span><strong> | </strong></span><input type="text"placeholder="value"/></div>`
+    const kvpraw = `<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;" class="keyvaluepair-partial-kvp-container"><input class="input" style="width:40%" type="text"placeholder="key"/><span><strong> | </strong></span><input class="input" style="width:40%" type="text"placeholder="value"/></div>`
+
     function addBlankAttribute() {
         document.querySelector("#kvpcontainer").insertAdjacentHTML("beforeend", kvpraw);
     }

@@ -1,7 +1,15 @@
 <div id="contentholder">
     <img src="/images/tool.png" style="width:20%" />
     <p><strong>Tool library</strong></p>
-    <input id="toolsearch" style="width: 80%" class="input" type="text" placeholder="Search for a tool.">
+    
+    <div class="field has-addons" style="width: 80%">
+        <div class="control">
+            <a class="button is-static"><i class='fa fa-search'></i></a>
+        </div>
+        <div class="control is-expanded">
+            <input id="toolsearch" style="width: 100%" class="input" type="text" placeholder="Search for a tool.">
+        </div>
+    </div>
     <a href="/tools/add" class="button is-info">Add new tool</a>
     <div id="toolbox">
         {{#each this.tools}}

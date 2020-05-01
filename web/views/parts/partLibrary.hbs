@@ -2,8 +2,15 @@
     <img src="/images/part.png" style="width:20%" />
     <p><strong>Part library</strong></p>
     <p>Click on any part to view the ops that make it up, or change other properties.</p>
-    <input id="partsearch" style="width: 80%" class="input" type="text" placeholder="Search for a part.">
-    <a href="/parts/add" class="button is-info">Add new part</a>
+    <a href="/parts/add" class="button is-info">Create new part</a>
+    <div class="field has-addons" style="width: 80%">
+        <div class="control">
+            <a class="button is-static"><i class='fa fa-search'></i></a>
+        </div>
+        <div class="control is-expanded">
+            <input id="partsearch" class="input" type="text" placeholder="Search for a part."/>
+        </div>
+    </div>
     <div id="partbox">
         {{#each this.parts}}
             <div class="partcard" searchstring="name: {{name}} ops: {{ops.length}}">

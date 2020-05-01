@@ -1,7 +1,7 @@
 <div id="maincontainer">
+    <img src="/images/machine.png" style="width: 50%; margin: 5px; max-width: 150px"/>
     <p>Saved attributes for the machine:</p>
-    <p><strong>{{this.machine.attributes.name}}</strong></p>
-    <img src="/images/machine.png" style="margin: 5px; width: 100px"/>
+    <p style="margin-bottom: 5px;"><strong>{{this.machine.attributes.name}}</strong></p>
     <a style="margin: 0 3px 0 3px" class="button is-info" href="/machines">Go back to the machines page</a>
     <span style="margin-top: 15px;">Field <strong>|</strong> Value</span>
     <div id="kvpcontainer" action="http://localhost:3000/machines"></div>
@@ -23,7 +23,7 @@
 
 <script>
     function newKvpraw(key, value) {
-        return kvpraw = `<div class="keyvaluepair-partial-kvp-container"><input size=50 readonly value="${key}" type="text"placeholder="key"/><span><strong> | </strong></span><input size=50  readonly value="${value}" type="text"placeholder="value"/></div>`
+        return `<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;" class="keyvaluepair-partial-kvp-container"><input class="input" style="width:40%" type="text"placeholder="key" value="${key}" readonly/><span><strong> | </strong></span><input class="input" style="width:40%" type="text"placeholder="value" value="${value}" readonly/></div>`
     }
 
     axios.get("http://localhost:3000/api/machines/{{this.machine.id}}").then(r => {

@@ -82,7 +82,10 @@ and the machines and tools that the particular op needs.
 
 GET /api/parts/:id  
 Returns the details for a specific part, including the part details, as well as each op required to make the part,
-and the machines and tools that the particular op needs.
+and the machines and tools that the particular op needs.  
+  
+POST /api/parts  
+Creates a new part in the system. Name is the only required field.
 
 ## Job
 Jobs are runs of a part number in a certain quantity, with a certain due date.

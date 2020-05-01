@@ -92,6 +92,10 @@ app.get('/parts', async (req, res) => {
     res.render('./parts/partLibrary.hbs', {parts})
 })
 
+app.get('/parts/add', async (req, res) => {
+    res.render('./parts/add.hbs');
+})
+
 app.get('/parts/:id', async (req, res) => {
     const [part, tools, machines] = await Promise.all([
         fetch("http://localhost:3000/api/parts/" + req.params.id).then(r => r.json()),
