@@ -49,13 +49,13 @@
 
 <script>
     document.getElementById("toolsearch").addEventListener('input', (event) => {
-        let search = event.srcElement.value.trim();
+        let search = event.srcElement.value.toLowerCase().trim();
         if (!search) {
             document.querySelectorAll(".toolcard").forEach(element => element.style.display = "flex");
             return;
         }
         document.querySelectorAll(".toolcard").forEach(element => {
-                element.style.display = (element.getAttribute("searchstring").indexOf(search) == -1 ? "none" : "flex");
+                element.style.display = (element.getAttribute("searchstring").toLowerCase().indexOf(search) == -1 ? "none" : "flex");
         })
         
     })

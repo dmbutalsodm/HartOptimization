@@ -15,7 +15,13 @@
         <input id="hoursinput" class="input" type="number" placeholder="Hours" required>
 
         <label for="minutes"><b>Minutes:</b></label>
-        <input id="minutesinput" class="slider is-fullwidth" step="15" min="0" max="45" value="0" type="range" oninput="updateTextInput(this.value);"/>
+        <input id="minutesinput" list="steplist" class="slider is-fullwidth" step="15" min="0" max="45" value="0" type="range" oninput="updateTextInput(this.value);">
+        <datalist id="steplist">
+            <option>0</option>
+            <option>15</option>
+            <option>30</option>
+            <option>45</option>
+        </datalist>
         <p id="slideroutput">0</p>
 
         <label for="part"><b>Part</b></label>
@@ -23,7 +29,7 @@
 
         <input id="hiddeninput" type="hidden" name="intervals" value=0 />
 
-        <button id="sub" type="submit" class="button is-info" onclick="subfunc(this)">Add op to part</button>
+        <button id="sub" type="button" class="button is-info" onclick="subfunc(this)">Add op to part</button>
         <a href="/parts/{{this.part.partId}}" class="button is-danger" style="margin-bottom: 3px;">Cancel op addition</a>
     </form>
 </div>
@@ -48,17 +54,56 @@
         margin-top: 10px;
     }
 
+    .shakeanimation {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes shake {
+        10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+        }
+        
+        20%, 80% {
+            transform: translate3d(2px, 0, 0);
+        }
+
+        30%, 50%, 70% {
+            transform: translate3d(-4px, 0, 0);
+        }
+
+        40%, 60% {
+            transform: translate3d(4px, 0, 0);
+        }
+    }
 </style>
 
 <script>
-    function updateTextInput(val) {
-        document.getElementById('slideroutput').innerText=val; 
-    }
+    const updateTextInput = val => document.getElementById('slideroutput').innerText = val;
 
     function subfunc(e) {
+        if (!document.querySelector("#opform").checkValidity()) {
+            let subbutt = document.querySelector("#sub");
+            subbutt.setAttribute("onclick", "");
+            subbutt.classList.remove("is-info");
+            subbutt.classList.add("is-warning");
+            subbutt.classList.add("shakeanimation");
+            subbutt.textContent = "Please fill in all fields!"
+            setTimeout(() => {
+                subbutt.classList.add("is-info")
+                subbutt.classList.remove("is-warning");
+                subbutt.classList.remove("shakeanimation");
+                subbutt.textContent = "Add op to part"
+                subbutt.setAttribute("onclick", "subfunc(this)");
+            }, 3000)
+            return;
+        }
+
         document.querySelector("#hiddeninput").value = (document.querySelector("#hoursinput").value * 4) + (document.querySelector("#minutesinput").value / 15);
 
+        e.setAttribute("type", "button")
         e.setAttribute("onclick", "");
+        document.querySelector("#opform").submit();
         e.classList.add("is-loading");
         setTimeout(() => {
             e.classList.remove("is-loading");

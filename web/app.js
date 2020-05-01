@@ -36,7 +36,7 @@ app.engine('.hbs', exphbs({
             return retString;
         },
         dueDateToDateString(dateString) {
-            const dateObj = new Date(dateString);
+            const dateObj = new Date(new Date(dateString).getTime() + 18000000);
             return `Due ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days from today.`
         },
         subtract(a, b) {return a - b}
@@ -129,6 +129,11 @@ app.get('/jobs', async (req, res) => {
         j.partName = parts.find(p => j.partId == p.partId).name
     })
     res.render('./jobs/jobs.hbs', {jobs});
+})
+
+app.get('/jobs/add', async (req, res) => {
+    let parts = await fetch("http://localhost:3000/api/parts").then(r => r.json());
+    res.render('./jobs/add.hbs', {parts});
 })
 
 app.listen(80, () => console.log("Listening on port 80"))

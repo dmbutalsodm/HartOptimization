@@ -2,8 +2,9 @@
 <div id="contentholder">
     <img src="/images/job.png" style="width:50%; max-width: 220px" />
     <p style="margin-top: 8px;"><strong>Active jobs</strong></p>
-    <p>This is a list of all the active jobs in the system. Past due jobs are not shown.</p>
-    <p>Use the arrows to raise and lower priority.</p>
+    <p style="text-align: center;">This is a list of all the active jobs in the system.</p>
+    <p style="text-align: center;">Use the arrows to raise and lower priority.</p>
+    <p><strong>Changes are saved automatically.</strong></p>
     <a href="add/" class="button is-info">Add new job</a>
     <div id="jobbox">
         {{#each this.jobs}}
@@ -88,7 +89,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 70%
+        width: 90%;
+        max-width: 870px;
     }
 
     #contentholder > * {

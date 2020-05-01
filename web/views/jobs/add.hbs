@@ -1,0 +1,197 @@
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+<div id="mainmodal" class="modal">
+    <div class="modal-background" onclick="document.querySelector('#mainmodal').classList.remove('is-active')"></div>
+    <div class="modal-content box partsearchmodal">
+        <img src="/images/part.png" style="width:70%; max-width: 180px;" />
+        <p><strong>Part library</strong></p>
+        <p>Click on the part that this job will create.</p>
+
+        <div class="field has-addons" style="width: 60%;">
+            <div class='control'><a class="is-static button"><i class='fa fa-search'></i></a></div>
+            <div class='control is-expanded'><input id="partsearch" class="input" type="text"
+                    placeholder="Search for a part."></div>
+        </div>
+        <div id="partbox">
+            {{#each this.parts}}
+            <div class="partcard" searchstring="name: {{name}} ops: {{ops.length}}">
+                <a onclick="populatePart('{{partId}}')" class="button partbutton">Name: {{name}}, ops:
+                    {{ops.length}}</a>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    <button class="modal-close is-large" onclick="document.querySelector('#mainmodal').classList.remove('is-active')" />
+</div>
+<div class="contentholder" style="width: 60%;">
+    <img src="/images/job.png" style="width:50%; max-width: 220px;" />
+    <span class="title is-4" style="margin: 5px 0 5px 0;">Create new job</span>
+    <p>Fill in the required details below, then click the add button at the bottom.</p>
+
+    <form id="jobform" class="contentholder formholder" action="http://localhost:3000/api/jobs" target="dummyframe" method="POST">
+        <label for="name"><b>Name:</b></label>
+        <input autocomplete="off" class="input" type="text" placeholder="Name" name="name" required>
+
+        <label for="partId"><b>Part:</b></label>
+        <div class="field has-addons" style="width:100%">
+            <div class='control is-expanded'><input id="searchpopulate" class="input" type="text" readonly
+                    placeholder="Click the Search button" name="partId" required></div>
+            <div class='control'><a class="button"
+                    onclick="document.querySelector('#mainmodal').classList.add('is-active')"><i
+                        class='fa fa-search'></i></a></div>
+        </div>
+
+        <label for="partCount"><b>Part count:</b></label>
+        <input class="input" type="number" placeholder="Part count" name="partCount" required>
+
+        <label for="dueDate"><b>Due date:</b></label>
+        <input class="input" type="date" name="dueDate" placeholder="Hours" required>
+
+        <button id="sub" type="button" class="button is-info" onclick="subfunc(this)" style="margin-top:12px;">Create job</button>
+        <a href="/jobs" class="button is-danger" style="margin-bottom: 3px;">Cancel job creation</a>
+    </form>
+</div>
+
+<style>
+    .contentholder {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    form {
+        min-width: 270px;
+    }
+
+    form>* {
+        margin: 3px 0 3px 0;
+    }
+
+    button:last-child {
+        margin-top: 10px;
+    }
+
+    .partsearchmodal {
+        height: 90%;
+        width: 80%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        padding-top: 80px;
+        align-items: center;
+    }
+
+    .partcard {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        min-height: 50px;
+        width: 100%;
+        border-radius: 5px;
+    }
+
+    .partbutton {
+        width: 100%;
+        justify-content: left;
+    }
+
+    #contentholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70%
+    }
+
+    #contentholder>* {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+    #partbox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+    }
+
+    #partbox>* {
+        margin-bottom: 2px;
+        margin-top: 2px;
+    }
+
+    .shakeanimation {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes shake {
+        10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+        }
+        
+        20%, 80% {
+            transform: translate3d(2px, 0, 0);
+        }
+
+        30%, 50%, 70% {
+            transform: translate3d(-4px, 0, 0);
+        }
+
+        40%, 60% {
+            transform: translate3d(4px, 0, 0);
+        }
+    }
+</style>
+
+<script>
+    document.getElementById("partsearch").addEventListener('input', (event) => {
+        let search = event.srcElement.value.toLowerCase().trim();
+        if (!search) {
+            document.querySelectorAll(".partcard").forEach(element => element.style.display = "flex");
+            return;
+        }
+        document.querySelectorAll(".partcard").forEach(element => {
+            element.style.display = (element.getAttribute("searchstring").toLowerCase().indexOf(search) == -1 ? "none" : "flex");
+        })
+
+    })
+
+    function updateTextInput(val) {
+        document.getElementById('slideroutput').innerText = val;
+    }
+
+    function subfunc(e) {
+        if (!document.querySelector("#jobform").checkValidity()) {
+            let subbutt = document.querySelector("#sub");
+            subbutt.setAttribute("onclick", "");
+            subbutt.classList.remove("is-info");
+            subbutt.classList.add("is-warning");
+            subbutt.classList.add("shakeanimation");
+            subbutt.textContent = "Please fill in all fields!"
+            setTimeout(() => {
+                subbutt.classList.add("is-info")
+                subbutt.classList.remove("is-warning");
+                subbutt.classList.remove("shakeanimation");
+                subbutt.textContent = "Create job"
+                subbutt.setAttribute("onclick", "subfunc(this)");
+            }, 3000)
+            return;
+        }
+
+        e.setAttribute("onclick", "");
+        document.querySelector("#jobform").submit();
+        e.classList.add("is-loading");
+        setTimeout(() => {
+            e.classList.remove("is-loading");
+            e.classList.remove("is-info");
+            e.classList.add("is-success");
+            e.textContent = "Success. Click again to return the job listing."
+            e.setAttribute("onclick", `window.location.href="/jobs"`)
+        }, 750)
+    }
+
+    function populatePart(v) {
+        document.querySelector('#searchpopulate').value = v;
+        document.querySelector('#mainmodal').classList.remove('is-active');
+    }
+</script>
