@@ -35,9 +35,10 @@ app.engine('.hbs', exphbs({
             retString += "."
             return retString;
         },
-        dueDateToDateString(dateString) {
+        dateToFromNowDateString(dateString) {
             const dateObj = new Date(new Date(dateString).getTime() + 18000000);
-            return `Due ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days from today.`
+            if (dateObj.getTime() > Date.now()) return `Starts ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days from today.`
+            return `Started ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${-1 * Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days ago.`
         },
         subtract(a, b) {return a - b}
     }

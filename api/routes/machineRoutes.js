@@ -1,5 +1,7 @@
 const machineManager = require('../objects/machine/MachineManager.js')
 const machineDB = require('../models/machine.js');
+const partManager = require('../objects/part/PartManager.js');
+const jobManager = require('../objects/job/JobManager.js')
 
 module.exports = {
     registerMachinePaths: (app) => {
@@ -34,5 +36,9 @@ module.exports = {
             let loaded = toolManager.assignToolsToMachine(req.params.id, req.body.tools);
             res.json({status: "ok", message: `The following tools were loaded into '${selectedMachine.attributes.name}': ${loaded.join(", ")}`});
         });
+
+        app.get('/api/machines/popularity', (req, res) => {
+            
+        })
     }
 }

@@ -22,7 +22,7 @@ const jobs = db.define('jobs', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    dueDate: {
+    startDate: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -36,9 +36,9 @@ db.sync();
 
 
 module.exports = {
-    addJob(id, partId, partCount, name, dueDate, priority) {
-        if (!new Date(dueDate).getTime()) throw new Error("The date passed was invalid");
-        return jobs.create({id, partId, partCount, name, dueDate, priority})
+    addJob(id, partId, partCount, name, startDate, priority) {
+        if (!new Date(startDate).getTime()) throw new Error("The date passed was invalid");
+        return jobs.create({id, partId, partCount, name, startDate: startDate, priority})
     },
 
     getJobs() {

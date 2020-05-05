@@ -36,6 +36,10 @@ class MachineManager {
         if (machineTest) return machineTest;
         return this.addMachine({id: id})
     }
+
+    async getMachinePopularities() {
+
+    }
 }
 const single = new MachineManager();
 module.exports = single;

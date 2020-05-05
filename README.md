@@ -88,15 +88,15 @@ POST /api/parts
 Creates a new part in the system. Name is the only required field.
 
 ## Job
-Jobs are runs of a part number in a certain quantity, with a certain due date.
+Jobs are runs of a part number in a certain quantity, with a certain start date.
 
 ## Job endpoints
 GET /api/jobs  
-Returns a list of all the jobs in the system. Includes id, partId, count, name, dueDate, and priority.  
+Returns a list of all the jobs in the system. Includes id, partId, count, name, startDate, and priority.  
   
 POST /api/jobs  
 Creates a new job. Requires 4 parameters in the post body.
 * `name`: The name of this job.
 * `partId`: The ID of the part that is running in this job.
 * `partCount`: The amount of parts that are to be made in this job.
-* `dueDate`: The day this job is due, in YYYY/MM/DD format.
+* `startDate`: The day this job will start, in YYYY/MM/DD format.

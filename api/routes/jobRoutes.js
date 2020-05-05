@@ -7,10 +7,10 @@ module.exports = {
             if (!req.body.partId)                                                                       return res.json({status: "error", message: "The partId field is required in the post body."})
             if (!req.body.partCount || !parseInt(req.body.partCount))                                   return res.json({status: "error", message: "The partCount field is required in the post body."})
             if (!req.body.name)                                                                         return res.json({status: "error", message: "The name field is required in the post body."})
-            if (!req.body.dueDate || !/20[0-9]{2}[-][012][0-9][-][0123][0-9]/.test(req.body.dueDate)) return res.json({status: "error", message: "The due field is required in the post body, or the provided date was invalid."})
+            if (!req.body.startDate || !/20[0-9]{2}[-][012][0-9][-][0123][0-9]/.test(req.body.startDate)) return res.json({status: "error", message: "The startDate field is required in the post body, or the provided date was invalid."})
             // Eventually priority check
 
-            return jobManager.addNewJob(req.body.partId, req.body.partCount, req.body.name, req.body.dueDate, 0).then((id) => {
+            return jobManager.addNewJob(req.body.partId, req.body.partCount, req.body.name, req.body.startDate, 0).then((id) => {
                 res.json({status: "ok", message: "The job was added."});
             })
         });

@@ -11,18 +11,14 @@ module.exports = {
         });
 
         app.get('/api/parts/:id', (req, res) => {
-            return Promise.all([opDB.getPartOps(req.params.id), partManager.getPart(req.params.id)]).then(values => {
-                res.json({partId: req.params.id, name: values[1].partName, ops: values[0]});
-            })
+            return partManager.getPart(req.params.id).then(v => {
+                return res.json(v)
+            });
         });
 
         app.get('/api/parts', (req, res) => {
-            return partManager.getAllPartIds().then(async ids => {
-                let ret = [];
-                for (id of ids) {
-                    ret.push({partId: id, name: (await partManager.getPart(id)).partName, ops: await opDB.getPartOps(id)})
-                }
-                res.json(ret);
+            return partManager.getAllParts().then(p => {
+                return res.json(p);
             })
         });
     }
