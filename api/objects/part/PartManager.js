@@ -24,8 +24,8 @@ class PartManager {
             let pTools = new Set();
             for (let o of ops) {
                 pTime += o.intervals;
-                o.machines.forEach(mac => pMachines.add(mac));
-                o.tools.forEach(mac => pTools.add(mac));
+                if (o.machines) o.machines.forEach(mac => pMachines.add(mac));
+                if (o.tools) o.tools.forEach(mac => pTools.add(mac));
             }
             return {partId: id, partName: values[1].partName, ops: ops, intervals: pTime, tools: Array.from(pTools), machines: Array.from(pMachines)}
         })

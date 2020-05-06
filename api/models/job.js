@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes, QueryTypes } = require('sequelize');
 const Database = require('../db.js');
 
 const db = Database.db;
@@ -34,7 +34,6 @@ const jobs = db.define('jobs', {
 
 db.sync();
 
-
 module.exports = {
     addJob(id, partId, partCount, name, startDate, priority) {
         if (!new Date(startDate).getTime()) throw new Error("The date passed was invalid");
@@ -49,5 +48,9 @@ module.exports = {
 
     updatePriority(id, newPrio) {
         jobs.update({priority: newPrio}, {where: {id: id}});
+    },
+
+    getActiveParts() {
+        return db.query("SELECT * FROM jobs INNER JOIN parts ON jobs.partId = parts.partId", { type: QueryTypes.SELECT }).then(r => r.map(e => e.partId));
     }
 }

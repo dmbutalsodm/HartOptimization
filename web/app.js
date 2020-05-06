@@ -131,7 +131,7 @@ app.get('/jobs', async (req, res) => {
     let jobs = await fetch("http://localhost:3000/api/jobs").then(r => r.json());
     let parts = await fetch("http://localhost:3000/api/parts").then(r => r.json());
     jobs.forEach(j => {
-        j.partName = parts.find(p => j.partId == p.partId).name
+        j.partName = parts.find(p => j.partId == p.partId).partName
     })
     res.render('./jobs/jobs.hbs', {jobs});
 })

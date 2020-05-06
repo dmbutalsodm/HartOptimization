@@ -1,5 +1,7 @@
 const Machine = require('./Machine.js');
 const machineDB = require('../../models/machine.js')
+const jobDB = require('../../models/job.js');
+const partManager = require('../part/PartManager.js');
 
 // Holds all machines, coordinates machines and their info.
 class MachineManager {
@@ -37,9 +39,18 @@ class MachineManager {
         return this.addMachine({id: id})
     }
 
-    async getMachinePopularities() {
-
+    getMachinePopularities() {
+        return jobDB.getActiveParts().then(async activeParts => {
+            let machines = {};
+            for (let partId of activeParts) {
+                await partManager.getPart(partId).then(p => {
+                    p.machines.forEach(m => machines[m] = (machines[m] ? machines[m] + 1 : 1));
+                })
+            }
+            console.log(machines);
+            return machines;
+        })
     }
 }
-const single = new MachineManager();
-module.exports = single;
+
+module.exports = new MachineManager();

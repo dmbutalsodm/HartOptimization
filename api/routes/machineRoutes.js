@@ -10,7 +10,7 @@ module.exports = {
             res.json(machineManager.getMachines());
         })
         
-        app.get('/api/machines/:id', (req, res) => {
+        app.get('/api/machines/:id(m[0-9]+)', (req, res) => {
             res.json(machineManager.getMachine(req.params.id));
         })
         
@@ -38,7 +38,7 @@ module.exports = {
         });
 
         app.get('/api/machines/popularity', (req, res) => {
-            
+            machineManager.getMachinePopularities().then(r => res.json(r))
         })
     }
 }

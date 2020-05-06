@@ -13,8 +13,8 @@
     </div>
     <div id="partbox">
         {{#each this.parts}}
-            <div class="partcard" searchstring="name: {{name}} ops: {{ops.length}}">
-                <a href="/parts/{{partId}}" class="button partbutton">Name: {{name}}, ops: {{ops.length}}</a>
+            <div class="partcard" searchstring="name: {{partName}} ops: {{ops.length}}">
+                <a href="/parts/{{partId}}" class="button partbutton">Name: {{partName}}, ops: {{ops.length}}</a>
             </div>
         {{/each}} 
     </div>
