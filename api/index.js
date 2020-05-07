@@ -25,6 +25,8 @@ db.start().then(async () => {
     require('./routes/partRoutes.js').registerPartPaths(app);
     
     require('./routes/jobRoutes.js').registerPartPaths(app);
+    console.log('dang')
+    require('./objects/schedule/ScheduleManager.js').generatePrelimSchedule();
 })
 
 // For debugging messages on errors

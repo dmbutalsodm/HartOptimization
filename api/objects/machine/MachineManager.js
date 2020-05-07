@@ -39,15 +39,17 @@ class MachineManager {
         return this.addMachine({id: id})
     }
 
+    // Potential bug with concatenating keys...
     getMachinePopularities() {
         return jobDB.getActiveParts().then(async activeParts => {
             let machines = {};
+            let allMachines = [];
             for (let partId of activeParts) {
                 await partManager.getPart(partId).then(p => {
-                    p.machines.forEach(m => machines[m] = (machines[m] ? machines[m] + 1 : 1));
+                    allMachines = allMachines.concat(p.machines)
                 })
             }
-            console.log(machines);
+            allMachines.forEach(m => machines[m] = machines[m] + 1 || 1);
             return machines;
         })
     }
