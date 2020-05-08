@@ -70,15 +70,20 @@ class ScheduleManager {
             job.prodArray = this.generateProductionArray(job.id, job.partCount, part.intervals);
             job.machines = part.machines;
         }
-        let yes = jobs[0];
-        console.log(yes);
-        let bestMachine = this.selectBestMachine(jobs[0].machines, machinePopularities);
-        console.log(this.canSchedule(schedule, bestMachine, yes.prodArray, yes.startDate))
-        this.schedule(schedule, bestMachine, yes.prodArray, yes.startDate);
+        jobs.forEach((j) => {
+            let ableToSchedule = false;
+            while (!ableToSchedule) {
+                let bestMachine = this.selectBestMachine(j.machines, machinePopularities);
+                if (this.canSchedule(schedule, bestMachine, j.prodArray, j.startDate)) {
+                    ableToSchedule = true;
+                    machinePopularities[bestMachine] += 2;
+                    this.schedule(schedule, bestMachine, j.prodArray, j.startDate)
+                } else {
+                    j.machines.splice(j.machines.indexOf(bestMachine), 1);
+                }
+            }
+        })
         console.log(schedule);
-
-        yes.startDate = "5/13/20"
-        console.log(this.canSchedule(schedule, bestMachine, yes.prodArray, yes.startDate))
     }
 }
 

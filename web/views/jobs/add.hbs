@@ -13,8 +13,8 @@
         </div>
         <div id="partbox">
             {{#each this.parts}}
-            <div class="partcard" searchstring="name: {{name}} ops: {{ops.length}}">
-                <a onclick="populatePart('{{partId}}')" class="button partbutton">Name: {{name}}, ops:
+            <div class="partcard" searchstring="name: {{partName}} ops: {{ops.length}}">
+                <a onclick="populatePart('{{partId}}')" class="button partbutton">Name: {{partName}}, ops:
                     {{ops.length}}</a>
             </div>
             {{/each}}
