@@ -4,7 +4,7 @@
     <span class="title is-4" style="margin: 5px 0 5px 0;">Create a new part</span>
     <p>Name is the only required field. You can add ops and machines from the part library.</p>
     
-    <form class="contentholder" id="partform" action="http://localhost:3000/api/parts" target="dummyframe" method="POST" >
+    <form class="contentholder" id="partform" action="http://{{WEBSITE_IP}}:3000/api/parts" target="dummyframe" method="POST" >
         <label for="name"><b>Name:</b></label>
         <input autocomplete="off" class="input" type="text" placeholder="Name" name="name" required>
 

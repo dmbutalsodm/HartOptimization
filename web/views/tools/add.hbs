@@ -3,7 +3,7 @@
     <span id="namereq">Name and pockets are the only required fields, <span style="font-size: 12pt">but you can add any additional info you would like.</span></span>
     <span>Any pair with either field blank will be ignored.</span>
     <img src="/images/tool.png" style="margin: 5px; width: 100px"/>
-    <div id="kvpcontainer" action="http://localhost:3000/machines">
+    <div id="kvpcontainer" action="http://{{WEBSITE_IP}}:3000/machines">
         {{>keyvaluepair initialKeyValue="name" readonly="true"}}
         {{>keyvaluepair initialKeyValue="pockets" readonly="true"}}
     </div>
@@ -47,13 +47,13 @@
         const subButton = document.querySelector("#submitbutton");
         subButton.setAttribute("onclick", null)
         subButton.classList.add("is-loading");
-        return axios.post("http://localhost:3000/api/tools/", postBody).then(() => {
+        return axios.post("http://{{WEBSITE_IP}}:3000/api/tools/", postBody).then(() => {
             setTimeout(() => {
                 subButton.textContent = "Success! Redirecting..."
                 subButton.classList.remove("is-info")
                 subButton.classList.remove("is-loading")
                 subButton.classList.add("is-success")
-                setTimeout(() => window.location = "http://localhost/tools", 1500)
+                setTimeout(() => window.location = "http://{{WEBSITE_IP}}/tools", 1500)
             }, 1500)
         })
     }

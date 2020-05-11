@@ -45,7 +45,7 @@
 </style>
 
 <script>
-    axios.get('http://localhost:3000/api/ops/{{this.op/opId}}').then(r => {
+    axios.get('http://{{WEBSITE_IP}}:3000/api/ops/{{this.op/opId}}').then(r => {
         r.data.machines.forEach(m => {
             document.querySelector(`[mid=${m}]`).setAttribute("selected", "true")
             document.querySelector(`[mid=${m}]`).style.transitionDuration = "0ms";
@@ -73,6 +73,6 @@
 
         let toAdd = Array.from(document.querySelectorAll('.machinecard[selected="true"]')).map(el => el.getAttribute("mid"))
         let toDelete = Array.from(document.querySelectorAll('.machinecard[selected="false"]')).map(el => el.getAttribute("mid"))        
-        axios.post("http://localhost:3000/api/ops/updatemachines", {opId: `{{this.op.opId}}`, toAdd, toDelete});
+        axios.post("http://{{WEBSITE_IP}}:3000/api/ops/updatemachines", {opId: `{{this.op.opId}}`, toAdd, toDelete});
     }
 </script>

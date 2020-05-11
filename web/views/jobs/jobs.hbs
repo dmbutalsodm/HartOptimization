@@ -153,7 +153,7 @@
             pl.style.backgroundColor = "#D3D3D3";
             setTimeout(() => pl.style.backgroundColor = "#FFFFFF", 750);
             pl.style.order = 10000 - parseInt(e.parentNode.children[1].innerText);
-            axios.post('http://localhost:3000/api/jobs/' + jid + "/updatepriority", {
+            axios.post('http://{{WEBSITE_IP}}:3000/api/jobs/' + jid + "/updatepriority", {
                 jobId: jid,
                 priority: parseInt(e.parentNode.children[1].innerText)
             })

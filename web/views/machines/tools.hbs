@@ -57,8 +57,8 @@
 
 <script>
     
-    axios.get('http://localhost:3000/api/tools').then(async r => {
-        const machines = (await axios.get('http://localhost:3000/api/machines')).data
+    axios.get('http://{{WEBSITE_IP}}:3000/api/tools').then(async r => {
+        const machines = (await axios.get('http://{{WEBSITE_IP}}:3000/api/machines')).data
         r.data.forEach(tool => {
             if (tool.machine == "{{this.machine.id}}") {
                 document.querySelector(`[type="checkbox"][toolname="${tool.id}"]`).checked = true;
@@ -96,8 +96,8 @@
         let changed = document.querySelectorAll('[type="checkbox"][changed="true"]').forEach(box => {
             box.checked ? toAdd.push(box.getAttribute("toolname")) : toFree.push(box.getAttribute("toolname"));
         })
-        if (toAdd.length) axios.post("http://localhost:3000/api/machines/{{this.machine.id}}/addTools", { tools: toAdd })
-        if(toFree.length) axios.post("http://localhost:3000/api/tools/freeTools", { tools: toFree })
+        if (toAdd.length) axios.post("http://{{WEBSITE_IP}}:3000/api/machines/{{this.machine.id}}/addTools", { tools: toAdd })
+        if(toFree.length) axios.post("http://{{WEBSITE_IP}}:3000/api/tools/freeTools", { tools: toFree })
 
     }
 </script>

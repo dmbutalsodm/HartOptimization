@@ -2,7 +2,9 @@ var express = require('express');
 var exphbs  = require('express-handlebars');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-const fetch = require('isomorphic-unfetch')
+const fetch = require('isomorphic-unfetch');
+
+const WEBSITE_IP = 'localhost'
 
 var app = express();
 app.engine('.hbs', exphbs({
@@ -51,11 +53,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => res.render('home'))
+app.get('/', (req, res) => res.render('home', {WEBSITE_IP}))
 
 app.get('/machines', async (req, res) => {
     let machines = await fetch("http://localhost:3000/api/machines").then(r => r.json())
-    res.render('machines/machines.hbs', {machines})
+    res.render('machines/machines.hbs', {machines, WEBSITE_IP})
 })
 
 app.get('/machines/:id/tools', async (req, res) => {
@@ -65,15 +67,15 @@ app.get('/machines/:id/tools', async (req, res) => {
         let searchString = "";
         Object.keys(t.attributes).forEach(k => searchString += t.attributes[k] + " ");
     })
-    res.render('./machines/tools.hbs', {machine, tools})
+    res.render('./machines/tools.hbs', {machine, tools, WEBSITE_IP})
 })
 
 app.get('/machines/:id/attributes', async (req, res) => {
     let machine = await fetch("http://localhost:3000/api/machines/" + req.params.id).then(r => r.json());
-    res.render('./machines/attributes.hbs', {machine});
+    res.render('./machines/attributes.hbs', {machine, WEBSITE_IP});
 });
 
-app.get('/machines/add', async (req, res) => res.render('./machines/add.hbs'))
+app.get('/machines/add', async (req, res) => res.render('./machines/add.hbs', {WEBSITE_IP}))
 
 app.get('/tools', async (req, res) => {
     let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
@@ -83,18 +85,18 @@ app.get('/tools', async (req, res) => {
             t.machine = (machines.find(m => m.id == t.machine)).attributes.name;
         }
     })
-    res.render('./tools/toolLibrary.hbs', {tools})
+    res.render('./tools/toolLibrary.hbs', {tools, WEBSITE_IP})
 })
 
-app.get('/tools/add', async (req, res) => res.render('./tools/add.hbs'))
+app.get('/tools/add', async (req, res) => res.render('./tools/add.hbs', {WEBSITE_IP}))
 
 app.get('/parts', async (req, res) => {
     let parts = await fetch("http://localhost:3000/api/parts").then(r => r.json())
-    res.render('./parts/partLibrary.hbs', {parts})
+    res.render('./parts/partLibrary.hbs', {parts, WEBSITE_IP})
 })
 
 app.get('/parts/add', async (req, res) => {
-    res.render('./parts/add.hbs');
+    res.render('./parts/add.hbs', {WEBSITE_IP});
 })
 
 app.get('/parts/:id', async (req, res) => {
@@ -107,24 +109,24 @@ app.get('/parts/:id', async (req, res) => {
         o.machines.forEach((om, i) => o.machines[i] = machines.find(m => om == m.id).attributes.name)
         o.tools.forEach((ot, i) => o.tools[i] = tools.find(t => ot == t.id).attributes.name)
     })
-    res.render('./parts/part.hbs', {part})
+    res.render('./parts/part.hbs', {part, WEBSITE_IP})
 })
 
 app.get('/parts/:id/addOp', async (req, res) => {
     const part = await fetch("http://localhost:3000/api/parts/" + req.params.id).then(r => r.json())
-    res.render('./parts/addOp.hbs', {part})
+    res.render('./parts/addOp.hbs', {part, WEBSITE_IP})
 })
 
 app.get('/parts/:partId/:opId/machines', async (req, res) => {
     let machines = await fetch("http://localhost:3000/api/machines/").then(r => r.json());
     let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))
-    res.render('./parts/opMachines.hbs', {machines, op});
+    res.render('./parts/opMachines.hbs', {machines, op, WEBSITE_IP});
 })
 
 app.get('/parts/:partId/:opId/tools', async (req, res) => {
     let tools = await fetch("http://localhost:3000/api/tools").then(r => r.json())
     let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))
-    res.render('./parts/opTools.hbs', {tools, op})
+    res.render('./parts/opTools.hbs', {tools, op, WEBSITE_IP})
 })
 
 app.get('/jobs', async (req, res) => {
@@ -133,12 +135,12 @@ app.get('/jobs', async (req, res) => {
     jobs.forEach(j => {
         j.partName = parts.find(p => j.partId == p.partId).partName
     })
-    res.render('./jobs/jobs.hbs', {jobs});
+    res.render('./jobs/jobs.hbs', {jobs, WEBSITE_IP});
 })
 
 app.get('/jobs/add', async (req, res) => {
     let parts = await fetch("http://localhost:3000/api/parts").then(r => r.json());
-    res.render('./jobs/add.hbs', {parts});
+    res.render('./jobs/add.hbs', {parts, WEBSITE_IP});
 })
 
 app.listen(80, () => console.log("Listening on port 80"))

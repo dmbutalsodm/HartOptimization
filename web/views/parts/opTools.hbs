@@ -55,7 +55,7 @@
 </style>
 
 <script>
-    axios.get('http://localhost:3000/api/ops/{{this.op.opId}}').then(r => {
+    axios.get('http://{{WEBSITE_IP}}:3000/api/ops/{{this.op.opId}}').then(r => {
         r.data.tools.forEach(t => {
             document.querySelector(`[toolname=${t}]`).checked = true;
         })
@@ -87,6 +87,6 @@
             box.checked ? toAdd.push(box.getAttribute("toolname")) : toDelete.push(box.getAttribute("toolname"));
         })
         
-        if (toAdd.length || toDelete.length) axios.post("http://localhost:3000/api/ops/updatetools", {opId: `{{this.op.opId}}`, toAdd, toDelete});
+        if (toAdd.length || toDelete.length) axios.post("http://{{WEBSITE_IP}}:3000/api/ops/updatetools", {opId: `{{this.op.opId}}`, toAdd, toDelete});
     }
 </script>

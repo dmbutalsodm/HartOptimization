@@ -47,13 +47,13 @@
         const subButton = document.querySelector("#submitbutton");
         subButton.setAttribute("onclick", null)
         subButton.classList.add("is-loading");
-        return axios.post("http://localhost:3000/api/machines/", postBody).then(() => {
+        return axios.post("http://{{WEBSITE_IP}}:3000/api/machines/", postBody).then(() => {
             setTimeout(() => {
                 subButton.textContent = "Success! Redirecting..."
                 subButton.classList.remove("is-info")
                 subButton.classList.remove("is-loading")
                 subButton.classList.add("is-success")
-                setTimeout(() => window.location = "http://localhost/machines", 1500)
+                setTimeout(() => window.location = "http://{{WEBSITE_IP}}/machines", 1500)
             }, 1500)
         })
     }

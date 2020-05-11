@@ -27,7 +27,7 @@
     <span class="title is-4" style="margin: 5px 0 5px 0;">Create new job</span>
     <p>Fill in the required details below, then click the add button at the bottom.</p>
 
-    <form id="jobform" class="contentholder formholder" action="http://localhost:3000/api/jobs" target="dummyframe" method="POST">
+    <form id="jobform" class="contentholder formholder" action="http://{{WEBSITE_IP}}:3000/api/jobs" target="dummyframe" method="POST">
         <label for="name"><b>Name:</b></label>
         <input autocomplete="off" class="input" type="text" placeholder="Name" name="name" required>
 

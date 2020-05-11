@@ -4,7 +4,7 @@
     <p style="margin-bottom: 5px;"><strong>{{this.machine.attributes.name}}</strong></p>
     <a style="margin: 0 3px 0 3px" class="button is-info" href="/machines">Go back to the machines page</a>
     <span style="margin-top: 15px;">Field <strong>|</strong> Value</span>
-    <div id="kvpcontainer" action="http://localhost:3000/machines"></div>
+    <div id="kvpcontainer" action="http://{{WEBSITE_IP}}:3000/machines"></div>
 </div>
 
 <style>
@@ -26,7 +26,7 @@
         return `<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;" class="keyvaluepair-partial-kvp-container"><input class="input" style="width:40%" type="text"placeholder="key" value="${key}" readonly/><span><strong> | </strong></span><input class="input" style="width:40%" type="text"placeholder="value" value="${value}" readonly/></div>`
     }
 
-    axios.get("http://localhost:3000/api/machines/{{this.machine.id}}").then(r => {
+    axios.get("http://{{WEBSITE_IP}}:3000/api/machines/{{this.machine.id}}").then(r => {
         const container = document.querySelector("#kvpcontainer");
         for (key of Object.keys(r.data.attributes)) {
             container.insertAdjacentHTML("beforeend", newKvpraw(key, r.data.attributes[key]));

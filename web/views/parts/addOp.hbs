@@ -4,7 +4,7 @@
     <span class="title is-4" style="margin: 5px 0 5px 0;">Add op to part - {{this.part.partName}}</span>
     <p>Fill in <strong>all</strong> fields below, then click the add button at the bottom.</p>
     
-    <form class="contentholder" id="opform" action="http://localhost:3000/api/ops" target="dummyframe" method="POST" >
+    <form class="contentholder" id="opform" action="http://{{WEBSITE_IP}}:3000/api/ops" target="dummyframe" method="POST" >
         <label for="name"><b>Name:</b></label>
         <input autocomplete="off" class="input" type="text" placeholder="Name" name="name" required>
 
