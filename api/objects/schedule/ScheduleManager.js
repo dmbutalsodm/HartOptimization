@@ -13,7 +13,7 @@ class ScheduleManager {
     }
 
     daysFromToday(inputDay) {
-        return Math.floor((new Date(new Date(inputDay).getTime() + 43200000) - Date.now()) / 1000 / 60 / 60 / 24)
+        return Math.ceil((new Date(new Date(inputDay).getTime() + 43200000) - Date.now()) / 1000 / 60 / 60 / 24)
     }
 
     generateProductionArray(jobId, balance, intervalsPerPart) {
@@ -51,13 +51,19 @@ class ScheduleManager {
 
     schedule(currSchedule, targetMachine, productionArray, startDate) {
         let targetSchedule = currSchedule[targetMachine];
-        let startPos = this.daysFromToday(startDate);
+        let startPos = typeof startDate == "string" ? this.daysFromToday(startDate) : startDate;
         let endPos = startPos + productionArray.length;
         let c = 0;
-        for (let i = startPos + 1; i <= endPos; i++) {
+        for (let i = startPos; i < endPos; i++) {
             targetSchedule[i] = productionArray[c];
             c += 1;
         }
+    }
+
+    getNextStartDate(schedule, startDate, j) {
+        let s = this.daysFromToday(startDate);
+        while (schedule[s]) s += 1;
+        return s;
     }
 
     async generatePrelimSchedule() {
@@ -72,15 +78,21 @@ class ScheduleManager {
         }
         jobs.forEach((j) => {
             let ableToSchedule = false;
-            while (!ableToSchedule) {
-                let bestMachine = this.selectBestMachine(j.machines, machinePopularities);
+            let jMachines = j.machines.slice();
+            while (!ableToSchedule && jMachines.length) {
+                let bestMachine = this.selectBestMachine(jMachines, machinePopularities);
                 if (this.canSchedule(schedule, bestMachine, j.prodArray, j.startDate)) {
                     ableToSchedule = true;
-                    machinePopularities[bestMachine] += 2;
                     this.schedule(schedule, bestMachine, j.prodArray, j.startDate)
                 } else {
-                    j.machines.splice(j.machines.indexOf(bestMachine), 1);
+                    jMachines.splice(jMachines.indexOf(bestMachine), 1);
                 }
+            }
+            if (!ableToSchedule) {
+                let bestMachine = this.selectBestMachine(j.machines, machinePopularities);
+                console.log(j.id, bestMachine);
+                this.schedule(schedule, bestMachine, j.prodArray, this.getNextStartDate(schedule[bestMachine], j.startDate, j));
+                machinePopularities[bestMachine] += 2;
             }
         })
         console.log(schedule);
