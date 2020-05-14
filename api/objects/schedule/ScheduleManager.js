@@ -90,12 +90,11 @@ class ScheduleManager {
             }
             if (!ableToSchedule) {
                 let bestMachine = this.selectBestMachine(j.machines, machinePopularities);
-                console.log(j.id, bestMachine);
                 this.schedule(schedule, bestMachine, j.prodArray, this.getNextStartDate(schedule[bestMachine], j.startDate, j));
                 machinePopularities[bestMachine] += 2;
             }
         })
-        console.log(schedule);
+        return schedule;
     }
 }
 

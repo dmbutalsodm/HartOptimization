@@ -2,7 +2,7 @@ const jobManager = require('../objects/job/JobManager.js');
 const jobDB = require('../models/job.js');
 
 module.exports = {
-    registerPartPaths: (app) => {
+    registerJobPaths: (app) => {
         app.post('/api/jobs', (req, res) => {
             if (!req.body.partId)                                                                       return res.json({status: "error", message: "The partId field is required in the post body."})
             if (!req.body.partCount || !parseInt(req.body.partCount))                                   return res.json({status: "error", message: "The partCount field is required in the post body."})

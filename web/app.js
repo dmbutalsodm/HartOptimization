@@ -143,4 +143,9 @@ app.get('/jobs/add', async (req, res) => {
     res.render('./jobs/add.hbs', {parts, WEBSITE_IP});
 })
 
+app.get('/scheduling', async (req, res) => {
+    let machines = await fetch("http://localhost:3000/api/machines").then(r => r.json())
+    res.render('./schedule/schedule.hbs', {machines, WEBSITE_IP});
+})
+
 app.listen(80, () => console.log("Listening on port 80"))

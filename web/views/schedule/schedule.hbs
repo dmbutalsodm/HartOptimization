@@ -1,0 +1,141 @@
+<div class="contentholder">
+    <div id="headerholder">
+        <img src="/images/scheduling.png" style="width:50%; max-width: 180px; margin-bottom: 5px;" />
+        <p class="title is-4">This is a potential schedule, organised by machine.</p>
+        <p class="subtitle is-6" style="margin-bottom: 20px;">The balance represents the parts remaining to be produced at the <strong>beginning</strong> of the day.</p>
+    </div>
+    <div id='tablesholder'>
+        {{#each this.machines}}
+            <p style="width: 100%; text-align: left; font-weight: 700">{{attributes.name}}</p>
+            <table>
+                <tr id="{{id}}-date"><td>Date</td></tr>
+                <tr id="{{id}}-job"><td>Job</td></tr>
+                <tr id="{{id}}-balance"><td>Balance</td></tr>
+                <tr id="{{id}}-producing"><td>Production</td></tr>
+            </table>
+        {{/each}}
+    </div>
+</div>
+
+
+<style>
+    .modbutton {
+        background-color: #3298dc;
+        color: white;
+    }
+
+    .modbutton:hover {
+        background-color: #2793da;
+    }
+
+    .modbutton:active {
+        background-color: #2184c5;
+    }
+
+    td {
+        padding: 3px;
+        min-width: 50px;
+        border: 1px solid black;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    table {
+        border: 1px solid black;
+        margin-bottom: 30px;
+    }
+
+    #headerholder {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .contentholder {
+        display: block;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+        margin-bottom: 100px;
+        width: 100%;
+    }
+
+    #tablesholder {
+        padding: 20px;
+        display: block;
+        margin-left: 100px;
+        margin-right: 100px;
+        border-radius: 10px 10px 0px 0px;
+        
+        box-shadow: rgba(0,0,0,0.8) 0 0 10px;
+        overflow-x: scroll;
+    }
+
+    #tablesholder::-webkit-scrollbar {
+        background-color: #AAAAAA;
+        position: sticky;
+    }
+
+    #tablesholder::-webkit-scrollbar-thumb {
+        background-color: #3298dc;
+    }
+</style>
+<script type="text/javascript" src="/javascript/iscroll.js">
+    console.log('ok scroll now')
+</script>
+<script>
+    Promise.all(
+            [
+                axios.get('http://{{WEBSITE_IP}}:3000/api/scheduling'),
+                axios.get('http://{{WEBSITE_IP}}:3000/api/machines'),
+                axios.get('http://{{WEBSITE_IP}}:3000/api/tools'),
+                axios.get('http://{{WEBSITE_IP}}:3000/api/jobs'),
+                axios.get('http://{{WEBSITE_IP}}:3000/api/parts')
+            ]
+        ).then(results => {
+            [schedule, machines, tools, jobs, parts] = results;
+            schedule = schedule.data;
+            machines = machines.data;
+            tools    = tools.data;
+            jobs     = jobs.data;
+            parts    = parts.data;
+
+            console.log("all reqs ok!")
+            
+            for (machine of Object.keys(schedule)) {
+                let today = new Date();
+                let currJob = null;
+                let currJobId = "";
+                let colSpan = 1;
+                for (let i = 0; i < schedule[machine].length; i++) {
+                    document.querySelector(`#${machine}-date`).insertAdjacentHTML("beforeend", `<td>${today.getMonth() + 1}/${today.getUTCDate()}</td>`);
+                    if (schedule[machine][i]) {
+                        if (!currJob || currJobId != schedule[machine][i][0]) {
+                            currJob = document.createElement("td");
+                            currJobId = schedule[machine][i][0];
+                            currJob.innerText = jobs.find(j => j.id == schedule[machine][i][0]).name + " (Click to view details)"
+                            currJob.classList.add("modbutton")
+                            currJob.setAttribute('colspan', 1);
+                            colSpan = 1;
+                            document.querySelector(`#${machine}-job`).appendChild(currJob)
+                        } 
+                        else {
+                            colSpan += 1;
+                            currJob.setAttribute('colspan', colSpan);
+                        }
+                    }
+                    else {
+                        currJob = null;
+                        document.querySelector(`#${machine}-job`).insertAdjacentHTML("beforeend", `<td></td>`);
+                    }
+
+                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] ?  schedule[machine][i][1] : ""}</td>`);
+                    document.querySelector(`#${machine}-producing`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] ?  schedule[machine][i][2] : ""}</td>`);
+                    today = new Date(today.getTime() + 86400000);
+                }
+            }
+        })
+</script>
