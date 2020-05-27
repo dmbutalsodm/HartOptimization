@@ -36,12 +36,13 @@ class PartManager {
             let ret = [];
             for (let id of ids) {
                 const ops = await opDB.getPartOps(id);
+                // TOOL FOR OPS ARE SOMETIMES NOT PRESENT BY HERE - FIXED?
                 let pTime = 0;
                 let pMachines = new Set();
                 let pTools = new Set();
                 for (let o of ops) {
                     o.machines = o.machines || [];
-                    o.tools = o.machines || [];
+                    o.tools = o.tools || [];
                     pTime += o.intervals;
                     o.machines.forEach(mac => pMachines.add(mac));
                     o.tools.forEach(mac => pTools.add(mac));

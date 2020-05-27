@@ -46,7 +46,7 @@ module.exports = {
         const opTools    = require('./opTools');
         return ops.findAll({where: {parentPartId: partId}}).then(async rows => {
             rows = rows.map(r => r.get());
-            for (r of rows) {
+            for (let r of rows) {
                 r.machines = await opMachines.getOpMachines(r.opId);
                 r.tools    = await opTools.getOpTools(r.opId);
             }
@@ -57,6 +57,6 @@ module.exports = {
     },
 
     async getOp(opId) {
-        return ops.findOne({where: {opId: opId}}).then(r =>r.get())
+        return ops.findOne({where: {opId: opId}}).then(r => r.get())
     }
 }

@@ -7,7 +7,7 @@
     <input id="toolsearch" style="width: 80%" class="input" type="text" placeholder="Search for a tool.">
     <div id="toolbox">
         {{#each this.tools}}
-            <div class="toolcard box" id="{{id}}" searchstring="{{generateSearchString attributes}}">
+            <div class="toolcard box" onclick="boxClick(this)" id="{{id}}" searchstring="{{generateSearchString attributes}}">
                 <input type="checkbox" toolname="{{id}}" onclick="markChanged(this)">
                 <p class="toolattributesprinted {{id}}">{{prettyStringifyObject attributes}}</p>
             </div>
@@ -75,6 +75,11 @@
 
     function markChanged(element) {
         element.setAttribute("changed", "true")
+    }
+    
+    function boxClick(e) {
+        e.children[0].checked = !e.children[0].checked;
+        e.children[0].onclick();
     }
 
     function saveChanges(a) {
