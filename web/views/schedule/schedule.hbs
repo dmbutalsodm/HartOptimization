@@ -1,4 +1,6 @@
+<div id="loadingdim"></div>
 <div class="contentholder">
+    <div id="loadingcircle"></div>
     <div id="mainmodal" class="modal">
         <div class="modal-background" onclick="document.querySelector('#mainmodal').classList.remove('is-active')"></div>
         <div class="modal-content box jobinfomodal">
@@ -23,7 +25,7 @@
     </div>
     <div id='tablesholder'>
         {{#each this.machines}}
-            <a style="width: 100%; text-align: left; font-weight: 700" href="machines/{{id}}/tools">{{attributes.name}}</a>
+            <a class="machinename" style="position: relative; width: 100%; text-align: left; font-weight: 700" href="machines/{{id}}/tools">{{attributes.name}}</a>
             <table>
                 <tr id="{{id}}-date"><td>Date</td></tr>
                 <tr id="{{id}}-job"><td>Job</td></tr>
@@ -36,6 +38,35 @@
 
 
 <style>
+    #loadingdim {
+        transition-property: background-color;
+        transition-duration: 1s;
+        pointer-events: none;
+        position: fixed;
+        background-color: rgb(10, 10, 10, .86);
+        width: 100vw;
+        height: 1000vh;
+        margin-top: -100px;
+    }
+
+    #loadingcircle {
+        transition-property: opacity;
+        transition-duration: .55s;
+        pointer-events: none;
+        animation: spinAround .35s infinite linear;
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        border: 5px solid #888888;
+        border-radius: 290486px;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        content: "";
+        display: block;
+        height: 100px;
+        width: 100px;
+    }
+
     .jobinfomodal {
         display: flex;
         height: 95%;
@@ -122,8 +153,6 @@
 </style>
 
 <script>
-    'use strict'
-
     function dateToFromNowDateString(dateString) {
             const dateObj = new Date(new Date(dateString).getTime() + 18000000);
             if (dateObj.getTime() > Date.now()) return `Starts ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days from today.`
@@ -145,7 +174,13 @@
             tools    = Object.freeze(tools.data);
             jobs     = Object.freeze(jobs.data);
             parts    = Object.freeze(parts.data);
-            console.log(parts);
+            
+            const th = document.querySelector('#tablesholder')
+            th.onscroll = () => {
+                document.querySelectorAll(".machinename").forEach(e => {
+                    e.style.left = `${th.scrollLeft}px`;
+                })
+            }
 
             console.log("all reqs ok!")
 
@@ -208,12 +243,13 @@
             }
             for (let key of Object.keys(jobElements)) {
                 let jobPart = parts.find(p => p.partId == jobElements[key].part);
-                console.log(jobPart)
                 let possible = true;
                 jobPart.tools.forEach(tId => { 
                     if (tools.find(t => t.id == tId).machine !== jobElements[key].machine) possible = false; // Optimise with once-thru on tool array
                 });
                 jobElements[key].element.classList.add(possible ? "istooled" : "isnottooled");
             }
+            document.querySelector("#loadingcircle").style.opacity = "0";
+            document.querySelector('#loadingdim').style.backgroundColor = "rgba(10,10,10,0)"
         })
 </script>
