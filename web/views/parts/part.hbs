@@ -6,7 +6,7 @@
     <a href="/parts" class="button is-info">Return to part library</a>
     <div id="opbox">
         {{#each this.part.ops}}
-            <div class="opcard box" style="width:80%">
+            <div class="opcard box" style="width:80%; position: relative;">
                 <p class="title is-4">Op {{opCode}} - {{opName}}</p>
                 <p class="subtitle is-6">Completion time - {{intervalsToTime intervals}}</p>
                 <div class="machinetagcontainer" style="margin-bottom: 20px">
@@ -27,12 +27,72 @@
                         <a href="{{opId}}/tools" class="tag button is-info">Edit tools</a>
                     </div>
                 </div>
+                {{#if isSequential}}
+                    <div class="tooltip seqchain">
+                        <img src="/images/chains.png" />
+                            <span class="tooltiptext">These two operations are sequential, they will be performed one-after-another in the same machine.</span>
+                    </div>
+                {{/if}}
             </div>
         {{/each}} 
     </div>
 </div>
 
 <style>
+    /* HOVER TOOLTIP TAKEN FROM https://www.w3schools.com/howto/howto_css_tooltip.asp */
+
+    /* Tooltip container */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 300px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+
+        /* Position the tooltip text */
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -150px;
+
+        /* Fade in tooltip */
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    /* Tooltip arrow */
+    .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+
+    .seqchain {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 90%;
+        left: 46%;
+        z-index: 100;
+    }
 
     a {
         text-decoration: none !important;

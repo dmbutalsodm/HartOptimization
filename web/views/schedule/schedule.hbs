@@ -243,6 +243,7 @@
             }
             for (let key of Object.keys(jobElements)) {
                 let jobPart = parts.find(p => p.partId == jobElements[key].part);
+
                 let possible = true;
                 jobPart.tools.forEach(tId => { 
                     if (tools.find(t => t.id == tId).machine !== jobElements[key].machine) possible = false; // Optimise with once-thru on tool array

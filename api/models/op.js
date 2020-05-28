@@ -15,6 +15,7 @@ const ops = db.define('ops', {
     opCode:              { type: DataTypes.INTEGER, primaryKey: true},
     parentPartId:        { type: DataTypes.STRING,  primaryKey: true},
     opName:              { type: DataTypes.STRING,  allowNull: false},
+    isSequential:        { type: DataTypes.STRING,  allowNull: false},
     intervals:           { type: DataTypes.INTEGER, allowNull: false},
 }, {timestamps: false});
 
@@ -22,13 +23,15 @@ db.sync();
 
 module.exports = {
     // Add a new template op
-    addNewOp(opName, opId, opCode, parentPart, opIntervals) {
+    addNewOp(opName, opId, opCode, parentPart, opIntervals, isSequential) {
+        if (!isSequential) isSequential = false;
         return ops.create({
             opId: opId,
             opCode: opCode,
             opName: opName,
             parentPartId: parentPart,
-            intervals: opIntervals
+            intervals: opIntervals,
+            isSequential: isSequential
         });
     },
 
@@ -49,11 +52,11 @@ module.exports = {
             for (let r of rows) {
                 r.machines = await opMachines.getOpMachines(r.opId);
                 r.tools    = await opTools.getOpTools(r.opId);
+                r.isSequential = {"true": true, "false": false}[r.isSequential]
             }
             rows.sort((a, b) => a.opCode - b.opCode);
             return rows;
         })
-
     },
 
     async getOp(opId) {

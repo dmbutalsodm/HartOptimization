@@ -13,6 +13,7 @@ module.exports = {
             if (!req.body.part)                                                                           return res.json({status: "error", message: "Parent part is not present"})
             if (!req.body.opCode    || (!parseInt(req.body.opCode) && parseInt(req.body.opCode) != 0))    return res.json({status: "error", message: "Op code is not present"})
             if (!req.body.intervals || !parseInt(req.body.intervals))                                     return res.json({status: "error", message: "Intervals is not present"})
+            if (!req.body.isSequential)                                                                   return res.json({status: "error", message: "Sequential boolean is not present"})
 
             req.body.opCode = parseInt(req.body.opCode);
             req.body.intervals = parseInt(req.body.intervals);
@@ -36,7 +37,8 @@ module.exports = {
             if (!await partManager.partExists(req.body.part)) return res.json({status: "error", message: "An invalid parent part ID was provided."});
 
             // All arguments valid, create the op.
-            return opManager.createNewOp(req.body.name, req.body.opCode, req.body.machines, req.body.tools, req.body.part, req.body.intervals).then(id => {
+            const checkConversion = {"on": "true", "off": "false"};
+            return opManager.createNewOp(req.body.name, req.body.opCode, req.body.machines, req.body.tools, req.body.part, req.body.intervals, checkConversion[req.body.isSequential]).then(id => {
                 return res.json({status: "ok", message: `The op was added to the the part ${req.body.part}`, id: id}); 
             })
             

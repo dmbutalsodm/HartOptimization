@@ -7,12 +7,12 @@ let opToolsDB = require('../../models/opTools.js')
 class OpManager {
 
     // Function responsible for sending op information to the proper db tables.
-    async createNewOp(opName, opCode, machineArray, toolArray, parentPart, opIntervals) {
+    async createNewOp(opName, opCode, machineArray, toolArray, parentPart, opIntervals, isSequential) {
         // Ops are not represented in memory, so we can generate a new ID on creation.
         let opId = Uuid.getPrefixedSnowflake("o");
 
         // Sends to the op table with the minimum info required to make a template.
-        opDB.addNewOp(opName, opId, opCode, parentPart, opIntervals);
+        opDB.addNewOp(opName, opId, opCode, parentPart, opIntervals, isSequential);
 
         // Add each tool to the opTools table, op needs tool toolId
         toolArray.forEach(async toolId => {

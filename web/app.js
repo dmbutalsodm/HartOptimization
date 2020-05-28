@@ -31,7 +31,7 @@ app.engine('.hbs', exphbs({
         intervalsToTime(intervals) {
             intervals = parseInt(intervals);
             let retString = "";
-            if (intervals > 4) retString += `${Math.floor(intervals / 4)} hours`
+            if (intervals >= 4) retString += `${Math.floor(intervals / 4)} hour${Math.floor(intervals / 4) == 1 ? '' : "s"}`
             if (retString.length && intervals % 4) retString += ", "
             if (intervals % 4) retString += `${(intervals % 4) * 15} minutes`
             retString += "."
@@ -44,8 +44,8 @@ app.engine('.hbs', exphbs({
         },
         subtract(a, b) {return a - b}
     }
-
 }))
+
 app.set('view engine', '.hbs');
 
 app.use(express.json());

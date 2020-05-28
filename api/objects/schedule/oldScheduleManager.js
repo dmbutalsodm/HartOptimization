@@ -16,13 +16,13 @@ class ScheduleManager {
         return Math.ceil((new Date(new Date(inputDay).getTime() + 43200000) - Date.now()) / 1000 / 60 / 60 / 24)
     }
 
-    generateProductionArray(opId, balance, intervalsPerPart) {
+    generateProductionArray(jobId, balance, intervalsPerPart) {
         const partsPerDay = Math.floor(INTERVALS_PER_DAY / intervalsPerPart);
         if (!partsPerDay) partsPerDay = 1;
         const dailies = [];
         // Balance represents the parts that still need to be made at the beginning of the day.
         while (balance > 0) {
-            dailies.push([opId, balance, partsPerDay]);
+            dailies.push([jobId, balance, partsPerDay]);
             balance -= partsPerDay;
         }
         return dailies;
@@ -71,14 +71,8 @@ class ScheduleManager {
         const schedule = this.generateEmptySchedule();
         // Jobs come in arranged in highest priority, i.e. in correct order.
         const jobs = await jobManager.getJobs();
-        let opGroupings = [];
         for (let job of jobs) {
             const part = await partManager.getPart(job.partId);
-            opGroupings.push({
-                startDate: job.startDate,
-                count: job.partCount,
-                ops: part.ops
-            });
             job.prodArray = this.generateProductionArray(job.id, job.partCount, part.intervals);
             job.machines = part.machines;
         }

@@ -53,7 +53,8 @@ Takes up to 6 parameters in its post body.
 * `name`: The name of the op. 
 * `opCode`: The code for the operation in the manufacturing process. Usually 2 digits.
 * `part`: The part that this op belongs to.
-* intervals: the amount of 15-minute intervals the op takes.
+* `intervals`: the amount of 15-minute intervals the op takes.
+* `isSequential`: Whether or not this op is chained to the next.
 * `tools`: [optional] An array of the Tool IDs that this op needs to complete.
 * `machines`: [optional] An array of the Machine IDs that are capable of completing this op.
 
