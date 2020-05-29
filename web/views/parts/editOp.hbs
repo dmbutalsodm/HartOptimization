@@ -1,0 +1,127 @@
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+<div class="contentholder" style="width: 60%;">
+    <img src="/images/op.png" style="width:15%; max-width: 160px;" />
+    <span class="title is-4" style="margin: 5px 0 5px 0;">Edit op - {{this.op.opName}}</span>
+    <p>Edit any fields below, then click the save button at the bottom.</p>
+    
+    <form class="contentholder" id="opform" action="http://{{WEBSITE_IP}}:3000/api/ops/edit" target="dummyframe" method="POST" >
+        <label for="name"><b>Name:</b></label>
+        <input autocomplete="off" class="input" type="text" placeholder="Name" name="name" required value="{{this.op.opName}}">
+
+        <label for="opCode"><b>Op code:</b></label>
+        <input class="input" type="number" placeholder="Op code" name="opCode" required value="{{this.op.opCode}}">
+
+        <label for="hours"><b>Hours:</b></label>
+        <input id="hoursinput" class="input" type="number" placeholder="Hours" required>
+
+        <label for="minutes"><b>Minutes:</b></label>
+        <input id="minutesinput" list="steplist" class="slider is-fullwidth" step="15" min="0" max="45" value="0" type="range" oninput="updateTextInput(this.value);">
+        <datalist id="steplist">
+            <option>0</option>
+            <option>15</option>
+            <option>30</option>
+            <option>45</option>
+        </datalist>
+        <p id="slideroutput">0</p>
+
+        <label for="isSequential"><b>Sequential:</b></label>
+        <p style="font-size: 10pt; margin-top:-6px;">Does this op get completed back-to-back with the next?</p>
+        <input name="isSequential" type="checkbox" style="margin-bottom: 10px; zoom:2;" checked="{{this.op.isSequential}}">
+
+        <label for="part"><b>Part</b></label>
+        <input class="input" type="text" name="parentPartId" readonly value="{{this.op.parentPartId}}">
+
+        <input id="hiddeninput" type="hidden" name="intervals" value=0 />
+        <input id="hiddeninput" type="hidden" name="opId" value="{{this.op.opId}}" />
+
+        <button id="sub" type="button" class="button is-info" onclick="subfunc(this)">Save</button>
+        <a href="/parts/{{this.op.parentPartId}}" class="button is-danger" style="margin-bottom: 3px;">Cancel op edit</a>
+    </form>
+</div>
+
+<style>
+    .contentholder {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    form > * {
+        margin: 3px 0 3px 0;
+    }
+
+    form > input {
+        width: 230px !important;
+    }
+
+    button:last-child {
+        margin-top: 10px;
+    }
+
+    .shakeanimation {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        transform: translate3d(0, 0, 0);
+    }
+
+    @keyframes shake {
+        10%, 90% {
+            transform: translate3d(-1px, 0, 0);
+        }
+        
+        20%, 80% {
+            transform: translate3d(2px, 0, 0);
+        }
+
+        30%, 50%, 70% {
+            transform: translate3d(-4px, 0, 0);
+        }
+
+        40%, 60% {
+            transform: translate3d(4px, 0, 0);
+        }
+    }
+</style>
+
+<script>
+    const updateTextInput = val => document.getElementById('slideroutput').innerText = val;
+    document.querySelector("#hoursinput").setAttribute("value", Math.floor({{this.op.intervals}} / 4));
+    document.querySelector("#minutesinput").setAttribute("value", ({{this.op.intervals}} % 4) * 15);
+    document.querySelector("#slideroutput").innerText = ({{this.op.intervals}} % 4) * 15;
+    document.querySelectorAll("[checked=\"false\"]").forEach(l => l.removeAttribute("checked"))
+
+    function subfunc(e) {
+        if (!document.querySelector("#opform").checkValidity()) {
+            let subbutt = document.querySelector("#sub");
+            subbutt.setAttribute("onclick", "");
+            subbutt.classList.remove("is-info");
+            subbutt.classList.add("is-warning");
+            subbutt.classList.add("shakeanimation");
+            subbutt.textContent = "Please fill in all fields!"
+            setTimeout(() => {
+                subbutt.classList.add("is-info")
+                subbutt.classList.remove("is-warning");
+                subbutt.classList.remove("shakeanimation");
+                subbutt.textContent = "Add op to part"
+                subbutt.setAttribute("onclick", "subfunc(this)");
+            }, 3000)
+            return;
+        }
+
+        document.querySelector("#hiddeninput").value = (document.querySelector("#hoursinput").value * 4) + (document.querySelector("#minutesinput").value / 15);
+
+        e.setAttribute("type", "button")
+        e.setAttribute("onclick", "");
+        document.querySelector("#opform").submit();
+        e.classList.add("is-loading");
+        setTimeout(() => {
+            e.classList.remove("is-loading");
+            e.classList.remove("is-info");
+            e.classList.add("is-success");
+            e.textContent = "Op updated. Click to return to part."
+            e.setAttribute("onclick", `window.location.href="/parts/{{this.op.parentPartId}}"`)
+        }, 350)
+
+        
+    }
+</script>

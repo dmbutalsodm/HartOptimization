@@ -62,9 +62,27 @@ module.exports = {
             })
         })
 
+        app.post('/api/ops/edit', (req, res) => {
+            if (!req.body.opId)                          return res.json({status: "error", message: "No op id was present."})
+            if ( req.body.isSequential) req.body.isSequential = {"on": "true", "off": "false"}[req.body.isSequential];
+            if (!req.body.isSequential) req.body.isSequential = "false";
+            console.log(req.body.isSequential);
+            if (req.body.opCode) req.body.opCode = parseInt(req.body.opCode);
+            if (req.body.intervals) req.body.intervals = parseInt(req.body.intervals);
+            return opManager.editOp(req.body).then(() => {
+                res.json({status: "ok", message: "The op was updated."});
+            })
+        })
+
         app.get('/api/ops/:id', (req, res) => {
             opManager.getOp(req.params.id).then(r => {
                 res.json(r);
+            })
+        })
+
+        app.post('/api/ops/delete', (req, res) => {
+            opManager.deleteOp(req.body.opId).then(() => {
+                res.json({status: "ok", message: "The op was deleted."});
             })
         })
     }

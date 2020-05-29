@@ -6,7 +6,9 @@
     <a href="/parts" class="button is-info">Return to part library</a>
     <div id="opbox">
         {{#each this.part.ops}}
-            <div class="opcard box" style="width:80%; position: relative;">
+            <div id="box-{{opId}}" class="opcard box" style="width:80%; position: relative;">
+                <a href="{{opId}}/edit" class="editbutton tag button is-info">Edit op</a>
+                <a onclick="deleteOp('{{opId}}')" class="deletebutton tag button is-danger">Delete op</a>
                 <p class="title is-4">Op {{opCode}} - {{opName}}</p>
                 <p class="subtitle is-6">Completion time - {{intervalsToTime intervals}}</p>
                 <div class="machinetagcontainer" style="margin-bottom: 20px">
@@ -39,6 +41,18 @@
 </div>
 
 <style>
+    .editbutton {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .deletebutton {
+        position: absolute;
+        top: 37px;
+        right: 10px;
+    }
+
     /* HOVER TOOLTIP TAKEN FROM https://www.w3schools.com/howto/howto_css_tooltip.asp */
 
     /* Tooltip container */
@@ -83,7 +97,7 @@
         visibility: visible;
         opacity: 1;
     }
-
+    /* END HOVER TOOLTIP */ 
 
     .seqchain {
         width: 50px;
@@ -145,3 +159,13 @@
 
     }
 </style>
+
+<script>
+    function deleteOp(opId) {
+        axios.post("http://{{WEBSITE_IP}}:3000/api/ops/delete", {opId: opId}).then(r => {
+            if (r.data.status == "ok") {
+                document.querySelector("#box-" + opId).classList.add("slideout");
+            }
+        })
+    }
+</script>

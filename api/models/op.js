@@ -13,7 +13,7 @@ const ops = db.define('ops', {
     },
     // Opcode is an external value that is used when defining the process of a part
     opCode:              { type: DataTypes.INTEGER, primaryKey: true},
-    parentPartId:        { type: DataTypes.STRING,  primaryKey: true},
+    parentPartId:        { type: DataTypes.STRING,  allowNull: false},
     opName:              { type: DataTypes.STRING,  allowNull: false},
     isSequential:        { type: DataTypes.STRING,  allowNull: false},
     intervals:           { type: DataTypes.INTEGER, allowNull: false},
@@ -61,5 +61,22 @@ module.exports = {
 
     async getOp(opId) {
         return ops.findOne({where: {opId: opId}}).then(r => r.get())
+    },
+
+    async updateOp(editObject) {
+        return ops.update({opName: editObject.name, opCode: editObject.opCode, intervals: editObject.intervals, isSequential: `${editObject.isSequential}`}, {
+            where: {
+                opId: editObject.opId,
+                parentPartId: editObject.parentPartId,
+            }
+        });
+    },
+
+    async deleteOp(opId) {
+        return ops.destroy({
+            where: {
+                opId: opId
+            }
+        })
     }
 }

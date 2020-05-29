@@ -73,6 +73,18 @@ Takes 3 parameters:
 * `toAdd`: An array containing the tool IDs that will be added to the op.
 * `toDelete`: An array containing the tool IDs that will be removed from the op.
 
+POST /api/ops/edit  
+Takes some of the same required parameters of POST /api/ops to change details about an existing op.
+* `opId`: The ID of the op to edit.
+* `name`: [optional] The name of the op. 
+* `opCode`: [optional] The code for the operation in the manufacturing process. Usually 2 digits.
+* `intervals`: [optional] the amount of 15-minute intervals the op takes.
+* `isSequential`: [optional] Whether or not this op is chained to the next.
+
+POST /api/ops/delete  
+Deletes an existing op.
+* `opId`: The op to delete.
+
 ## Part 
 Parts are groupings of ops required to produce a physical product.
 

@@ -40,12 +40,20 @@ class OpManager {
         return opMachinesDB.updateOpMachines(opId, toDelete, toAdd);
     }
 
+    async editOp(editObject) {
+        return opDB.updateOp(editObject)
+    }
+
     async getOp(opId) {
         const op = await opDB.getOp(opId);
         op.machines = await opMachinesDB.getOpMachines(opId);
         op.tools = await opToolsDB.getOpTools(opId);
         return op;
         
+    }
+
+    async deleteOp(opId) {
+        return opDB.deleteOp(opId);
     }
 }
 

@@ -42,7 +42,8 @@ app.engine('.hbs', exphbs({
             if (dateObj.getTime() > Date.now()) return `Starts ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days from today.`
             return `Started ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${-1 * Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days ago.`
         },
-        subtract(a, b) {return a - b}
+        subtract(a, b) {return a - b},
+        parseBooleanString(string) {return {"true": true, "false": false}}
     }
 }))
 
@@ -128,6 +129,12 @@ app.get('/parts/:partId/:opId/tools', async (req, res) => {
     let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()))
     res.render('./parts/opTools.hbs', {tools, op, WEBSITE_IP})
 })
+
+app.get('/parts/:partId/:opId(o[0-9]+)/edit', async (req, res) => {
+    let op = (await fetch("http://localhost:3000/api/ops/" + req.params.opId).then(r => r.json()));
+    res.render('./parts/editOp.hbs', {op, WEBSITE_IP});
+})
+
 
 app.get('/jobs', async (req, res) => {
     let jobs = await fetch("http://localhost:3000/api/jobs").then(r => r.json());
