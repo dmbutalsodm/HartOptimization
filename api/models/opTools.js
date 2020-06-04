@@ -58,5 +58,13 @@ module.exports = {
             })
             return;
         }
+    },
+
+    async deleteOp(opId) {
+        return opTools.destroy({
+            where: {
+                opId: opId
+            }
+        })
     }
 }

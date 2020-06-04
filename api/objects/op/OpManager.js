@@ -53,7 +53,11 @@ class OpManager {
     }
 
     async deleteOp(opId) {
-        return opDB.deleteOp(opId);
+        return Promise.all([
+            opDB.deleteOp(opId),
+            opMachinesDB.deleteOp(opId),
+            opToolsDB.deleteOp(opId)
+        ])
     }
 }
 

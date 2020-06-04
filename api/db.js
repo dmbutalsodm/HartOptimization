@@ -9,7 +9,7 @@ class SQLConnection {
 			port: 3306,
 			host: 'localhost',
 			provider: 'mysql',
-			logging: true,
+			logging: false,
 		});
 	}
 

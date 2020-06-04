@@ -16,6 +16,18 @@ class ScheduleManager {
         return Math.ceil((new Date(new Date(inputDay).getTime() + 43200000) - Date.now()) / 1000 / 60 / 60 / 24)
     }
 
+    dateToIntervalsFromNow(inputDay) {
+        return Math.ceil((new Date(inputDay).getTime() - Date.now()) / 900000) // 900000 is 15 minutes
+    }
+
+    intersectArray(a1, a2) {
+        return a1.filter(value => -1 !== a2.indexOf(value))
+    }
+
+    unionArray(a1, a2) {
+        return Array.from(new Set([...a1, ...a2]));
+    }
+
     generateProductionArray(opId, balance, intervalsPerPart) {
         const partsPerDay = Math.floor(INTERVALS_PER_DAY / intervalsPerPart);
         if (!partsPerDay) partsPerDay = 1;
@@ -43,7 +55,7 @@ class ScheduleManager {
 
     canSchedule(currSchedule, targetMachine, productionArray, startDate) {
         let targetSchedule = currSchedule[targetMachine];
-        let startPos = this.daysFromToday(startDate);
+        let startPos = this.dateToIntervalsFromNow(startDate);
         let endPos = startPos + productionArray.length;
         for (let i = startPos + 1; i <= endPos; i++) if (targetSchedule[i] != null) return false;
         return true;
@@ -51,7 +63,7 @@ class ScheduleManager {
 
     schedule(currSchedule, targetMachine, productionArray, startDate) {
         let targetSchedule = currSchedule[targetMachine];
-        let startPos = typeof startDate == "string" ? this.daysFromToday(startDate) : startDate;
+        let startPos = typeof startDate == "string" ? this.dateToIntervalsFromNow(startDate) : startDate;
         let endPos = startPos + productionArray.length;
         let c = 0;
         for (let i = startPos; i < endPos; i++) {
@@ -60,8 +72,8 @@ class ScheduleManager {
         }
     }
 
-    getNextStartDate(schedule, startDate, j) {
-        let s = this.daysFromToday(startDate);
+    getNextStartDate(schedule, startDate) {
+        let s = this.dateToIntervalsFromNow(startDate);
         while (schedule[s]) s += 1;
         return s;
     }
@@ -75,31 +87,59 @@ class ScheduleManager {
         for (let job of jobs) {
             const part = await partManager.getPart(job.partId);
             opGroupings.push({
+                job: job,
                 startDate: job.startDate,
                 count: job.partCount,
-                ops: part.ops
+                ops: part.ops,
+                prodArrays: [],
             });
-            job.prodArray = this.generateProductionArray(job.id, job.partCount, part.intervals);
-            job.machines = part.machines;
         }
-        jobs.forEach((j) => {
-            let ableToSchedule = false;
-            let jMachines = j.machines.slice();
-            while (!ableToSchedule && jMachines.length) {
-                let bestMachine = this.selectBestMachine(jMachines, machinePopularities);
-                if (this.canSchedule(schedule, bestMachine, j.prodArray, j.startDate)) {
-                    ableToSchedule = true;
-                    this.schedule(schedule, bestMachine, j.prodArray, j.startDate)
-                } else {
-                    jMachines.splice(jMachines.indexOf(bestMachine), 1);
+        for (let opGroup of opGroupings) { // combines sequential ops into 1 op
+            for (let i = 0; i < opGroup.ops.length; i++) {
+                if (opGroup.ops[i].isSequential) {
+                    let o1 = opGroup.ops[i]
+                    let o2 = opGroup.ops[i + 1];
+                    if (!o2) continue;
+                    opGroup.ops.splice(i+1, 1); // removes op2 from the array
+                    o1.opId      = o1.opId + "|" + o2.opId;
+                    o1.intervals = parseInt(o1.intervals) + parseInt(o2.intervals);
+                    o1.opName    = o1.opName + "|" + o2.opName
+                    o1.machines  = this.intersectArray(o1.machines, o2.machines); // Can only be completed in common machines
+                    o1.tools     = this.unionArray(o1.tools, o2.tools); // Needs all the tools that either op needs.
                 }
             }
-            if (!ableToSchedule) {
-                let bestMachine = this.selectBestMachine(j.machines, machinePopularities);
-                this.schedule(schedule, bestMachine, j.prodArray, this.getNextStartDate(schedule[bestMachine], j.startDate, j));
-                machinePopularities[bestMachine] += 2;
+        }
+        
+        for (let opGroup of opGroupings) {
+            for (let i = 0; i < opGroup.ops.length; i++) {
+                opGroup.ops[i].prodArray = (this.generateProductionArray(opGroup.ops[i].opId, opGroup.count, opGroup.ops[i].intervals));
             }
-        })
+        }
+        
+        for (let opGroup of opGroupings) {
+            let currOps = opGroup.ops
+            for (let i = 0; i < currOps.length; i++) {
+                let ableToSchedule = false;
+                let opMachines = currOps[i].machines.slice();
+                while (!ableToSchedule && opMachines.length) {
+                    let bestMachine = this.selectBestMachine(opMachines, machinePopularities);
+                    if (this.canSchedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate)) {
+                        ableToSchedule = true;
+                        this.schedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate)
+                        machinePopularities[bestMachine] += 1;
+                    } else {
+                        opMachines.splice(opMachines.indexOf(bestMachine), 1);
+                    }
+                }
+                if (!ableToSchedule) {
+                    let opMachines = currOps[i].machines.slice();
+                    let bestMachine = this.selectBestMachine(opMachines, machinePopularities); 
+                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate));
+                    machinePopularities[bestMachine] += 2;
+                }
+            }  
+        }
+        console.log(schedule);
         return schedule;
     }
 }

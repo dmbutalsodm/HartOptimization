@@ -58,5 +58,13 @@ module.exports = {
             })
             return;
         }
+    },
+
+    async deleteOp(opId) {
+        return opMachines.destroy({
+            where: {
+                opId: opId
+            }
+        })
     }
 }
