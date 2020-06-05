@@ -60,10 +60,18 @@ module.exports = {
         }
     },
 
-    async deleteOp(opId) {
+    async deleteOpToolByOpId(opId) {
         return opTools.destroy({
             where: {
                 opId: opId
+            }
+        })
+    },
+
+    async deleteOpToolByToolId(toolId) {
+        return opTools.destroy({
+            where: {
+                toolId: toolId
             }
         })
     }

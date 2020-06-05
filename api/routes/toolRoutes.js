@@ -39,5 +39,11 @@ module.exports = {
             let names = toolManager.freeTools(req.body.tools);
             return res.json({status: "ok", message: `The following tools have been removed from machines: ${names.join(", ")}`})
         })
+
+        app.post('/api/tools/delete', (req, res) => {
+            toolManager.deleteTool(req.body.toolId).then(() => {
+                res.json({status: "ok", message: "The tool was deleted."});
+            })
+        })
     }
 }

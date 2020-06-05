@@ -7,6 +7,19 @@ class ToolManager {
         this.tools = [];
     }
 
+    deleteTool(id) {
+        let ind = -1;
+        for (let i = 0; i < this.tools.length; i++) {
+            if (this.tools[i].id == id) {
+                ind = i;
+                break;
+            }
+        }
+        this.tools.splice(ind, 1);
+
+        toolDB.deleteTool(id);
+    }
+
     getTools() {
         return this.tools;
     }

@@ -56,7 +56,7 @@ class OpManager {
         return Promise.all([
             opDB.deleteOp(opId),
             opMachinesDB.deleteOp(opId),
-            opToolsDB.deleteOp(opId)
+            opToolsDB.deleteOpToolByOpId(opId)
         ])
     }
 }

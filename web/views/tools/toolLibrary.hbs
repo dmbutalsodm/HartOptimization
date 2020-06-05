@@ -14,6 +14,7 @@
     <div id="toolbox">
         {{#each this.tools}}
             <div class="toolcard box" id="{{id}}" searchstring="{{generateSearchString attributes}}{{#if machine}} machine: {{machine}}{{/if}}">
+                <a onclick="deleteTool('{{id}}')" class="deletebutton tag button is-danger">Delete op</a>
                 <p class="toolattributesprinted {{id}}">{{prettyStringifyObject attributes}}{{#if machine}}<strong>machine: {{machine}}</strong>{{/if}}</p>
             </div>
         {{/each}} 
@@ -21,13 +22,44 @@
 </div>
 
 <style>
+
+    .deletebutton {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+    }
+
+    .slideout {
+        animation: slideout 1s forwards ease-out;
+    }
+
+    @keyframes slideout {
+        0% {
+            position: relative;
+            left: 0;
+            opacity: 1;
+            max-height: 1000px;
+
+        }
+        100% {
+            position: relative;
+            left: 100%;
+            opacity: 0;
+            max-height: 0px;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
     .toolcard { 
+        padding-right: 70px;
         display: flex;
         flex-direction: row;
         align-items: center;
         min-height: 50px;
         width: 100%;
         border: 1px solid rgb(201, 201, 201);
+        position: relative;
     }
     
     #contentholder {
@@ -65,7 +97,14 @@
         document.querySelectorAll(".toolcard").forEach(element => {
                 element.style.display = (element.getAttribute("searchstring").toLowerCase().indexOf(search) == -1 ? "none" : "flex");
         })
-        
     })
+
+    function deleteTool(id) {
+        axios.post("http://{{WEBSITE_IP}}:3000/api/ops/delete", {toolId: id}).then(r => {
+            if (r.data.status == "ok") {
+                document.querySelector("#box-" + opId).classList.add("slideout");
+            }
+        })
+    }
 
 </script>

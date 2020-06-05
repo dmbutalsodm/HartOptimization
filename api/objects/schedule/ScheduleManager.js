@@ -1,6 +1,7 @@
 const jobManager = require('../job/JobManager.js');
 const machineManager = require('../machine/MachineManager.js');
 const partManager = require('../part/PartManager.js');
+const Uuid = require('../UuidGenerator.js');
 
 const INTERVALS_PER_DAY = 32;
 
@@ -29,15 +30,15 @@ class ScheduleManager {
     }
 
     generateProductionArray(opId, balance, intervalsPerPart) {
-        const partsPerDay = Math.floor(INTERVALS_PER_DAY / intervalsPerPart);
-        if (!partsPerDay) partsPerDay = 1;
-        const dailies = [];
+        const intervals = [];
         // Balance represents the parts that still need to be made at the beginning of the day.
-        while (balance > 0) {
-            dailies.push([opId, balance, partsPerDay]);
-            balance -= partsPerDay;
+        for (let prodNum = 0; prodNum < balance; prodNum++) {
+            let thisOp = Uuid.getSnowflake();
+            for (let i = 0; i < intervalsPerPart; i++) {
+                intervals.push([opId, thisOp, balance - prodNum]);
+            }
         }
-        return dailies;
+        return intervals;
     }
 
     selectBestMachine(usableMachines, machinePopularities) {
@@ -103,7 +104,7 @@ class ScheduleManager {
                     opGroup.ops.splice(i+1, 1); // removes op2 from the array
                     o1.opId      = o1.opId + "|" + o2.opId;
                     o1.intervals = parseInt(o1.intervals) + parseInt(o2.intervals);
-                    o1.opName    = o1.opName + "|" + o2.opName
+                    o1.opName    = o1.opName + " and " + o2.opName
                     o1.machines  = this.intersectArray(o1.machines, o2.machines); // Can only be completed in common machines
                     o1.tools     = this.unionArray(o1.tools, o2.tools); // Needs all the tools that either op needs.
                 }

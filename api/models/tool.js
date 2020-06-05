@@ -1,5 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const Database = require('../db.js');
+const opTools = require('./opTools.js');
+const opMachines = require('./opMachines.js');
 
 const db = Database.db;
 
@@ -77,5 +79,12 @@ module.exports = {
                 id: toolID
             }
         })
+    },
+    
+    deleteTool(id) {
+        return Promise.all([
+            tools.destroy({where: {id: id}}),
+            opTools.deleteOpToolByToolId(id)
+        ])
     }
 }

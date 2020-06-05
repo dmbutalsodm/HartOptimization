@@ -1,6 +1,8 @@
 <div id="loadingdim"></div>
 <div class="contentholder">
     <div id="loadingcircle"></div>
+    <div class="slidebutton right" onclick="scrollTablesHolder('right')"><i style="zoom: 3" class="fa fa-chevron-right" aria-hidden="true"></i></div>
+    <div class="slidebutton left" onclick="scrollTablesHolder('left')"><i style="zoom: 3" class="fa fa-chevron-left" aria-hidden="true"></i></div>
     <div id="mainmodal" class="modal">
         <div class="modal-background" onclick="document.querySelector('#mainmodal').classList.remove('is-active')"></div>
         <div class="modal-content box jobinfomodal">
@@ -28,7 +30,7 @@
             <a class="machinename" style="position: relative; width: 100%; text-align: left; font-weight: 700" href="machines/{{id}}/tools">{{attributes.name}}</a>
             <table>
                 <tr id="{{id}}-date"><td>Date</td></tr>
-                <tr id="{{id}}-job"><td>Job</td></tr>
+                <tr id="{{id}}-op"><td>Op</td></tr>
                 <tr id="{{id}}-balance"><td>Balance</td></tr>
                 <tr id="{{id}}-producing"><td>Production</td></tr>
             </table>
@@ -38,6 +40,43 @@
 
 
 <style>
+    .slidebutton {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        bottom: 20px;
+        width: 75px;
+        height: 75px;
+        background-color: #3298dc;
+        border-radius: 100px;
+        padding-top: 5px;
+        padding-left: 10px;
+        filter: brightness(100%);
+        z-index: 50;
+    }
+
+    .slidebutton:hover {
+        filter: brightness(93%);
+    }
+
+    .slidebutton:active {
+        filter: brightness(86%);
+    }
+
+    .slidebutton.right {
+        right: 40%;
+        padding-top: 5px;
+        padding-left: 10px;
+    }
+
+    .slidebutton.left {
+        left: 40%;
+        padding-top: 5px;
+        padding-right: 15px;
+    }
+
     #loadingdim {
         transition-property: background-color;
         transition-duration: 1s;
@@ -80,6 +119,7 @@
     }
 
     .modbutton {
+        background-color: blue;
         color: white;
         filter: brightness(100%);
     }
@@ -90,14 +130,6 @@
 
     .modbutton:active {
         filter: brightness(90%);
-    }
-
-    .modbutton.istooled {
-        background-color: #3298dc;
-    }
-
-    .modbutton.isnottooled {
-        background-color: #ee5655;
     }
 
     td {
@@ -159,21 +191,31 @@
             return `Started ${dateObj.toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} - ${-1 * Math.ceil((dateObj.getTime() - Date.now()) / 1000 / 60 / 60 / 24)} days ago.`
     }
 
+    function scrollTablesHolder(lOrR) {
+        let th = document.querySelector('#tablesholder');
+        if (lOrR == "right") th.scrollTo({left: th.scrollLeft + (th.clientWidth * .85), behavior: "smooth"});
+        if (lOrR == "left") th.scrollTo({left: th.scrollLeft - (th.clientWidth * .85), behavior: "smooth"});
+    }
+
     Promise.all(
             [
                 axios.get('http://{{WEBSITE_IP}}:3000/api/scheduling'),
                 axios.get('http://{{WEBSITE_IP}}:3000/api/machines'),
                 axios.get('http://{{WEBSITE_IP}}:3000/api/tools'),
                 axios.get('http://{{WEBSITE_IP}}:3000/api/jobs'),
-                axios.get('http://{{WEBSITE_IP}}:3000/api/parts')
+                axios.get('http://{{WEBSITE_IP}}:3000/api/parts'),
+                axios.get('http://{{WEBSITE_IP}}:3000/api/ops')
             ]
         ).then(results => {
-            let     [schedule, machines, tools, jobs, parts] = results;
+            let     [schedule, machines, tools, jobs, parts, ops] = results;
+
             schedule = Object.freeze(schedule.data);
             machines = Object.freeze(machines.data);
             tools    = Object.freeze(tools.data);
             jobs     = Object.freeze(jobs.data);
             parts    = Object.freeze(parts.data);
+            ops      = Object.freeze(ops.data);
+            
             
             const th = document.querySelector('#tablesholder')
             th.onscroll = () => {
@@ -184,32 +226,35 @@
 
             console.log("all reqs ok!")
 
-            let jobElements = {};
+            let opElements = {};
             
             for (let machine of Object.keys(schedule)) {
-                let today = new Date();
-                let currJob = null;
-                let currJobId = "";
+                
+                let today = new Date(Math.ceil(Date.now() / 900000) * 900000)
+                let currOp = null;
+                let currUuid = null;
+                let currOpId = "";
                 let colSpan = 1;
                 for (let i = 0; i < schedule[machine].length; i++) {
-                    document.querySelector(`#${machine}-date`).insertAdjacentHTML("beforeend", `<td>${today.getMonth() + 1}/${today.getUTCDate()}</td>`);
+                    document.querySelector(`#${machine}-date`).insertAdjacentHTML("beforeend", `<td>${today.getMonth() + 1}/${today.getUTCDate()} ${today.getHours() % 12 || 12}:${(today.getMinutes() + "").padEnd(2, "0")}</td>`);
                     if (schedule[machine][i]) {
-                        if (!currJob || currJobId != schedule[machine][i][0]) {
-                            currJob = document.createElement("td");
-                            currJobId = schedule[machine][i][0];
-                            let currJobIdLocal = currJobId;
-                            jobElements[currJobIdLocal] = {element: currJob, machine: machine, part: (jobs.find(j => j.id == currJobId)).partId};
-                            let currJobObject = jobs.find(j => j.id == schedule[machine][i][0]);
-                            currJob.innerText = currJobObject.name + " (Click to view details)" + " - " + dateToFromNowDateString(currJobObject.startDate)
-                            currJob.classList.add("modbutton")
-                            currJob.setAttribute('colspan', 1);
+                        if (!currUuid || currUuid != schedule[machine][i][1]) {
+                            currOp = document.createElement("td");
+                            currOpId = schedule[machine][i][0];
+                            currUuid = schedule[machine][i][1];
+                            let currOpIdLocal = currOpId;
+                            opElements[currOpIdLocal] = {element: currOp, machine: machine, part: (ops.find(o => o.opId == currOpIdLocal.split("|")[0])).parentPartId};
+                            let currOpObject = ops.find(o => o.opId == currOpIdLocal.split("|")[0]);
+                            currOp.innerText = currOpObject.opName
+                            currOp.classList.add("modbutton")
+                            currOp.setAttribute('colspan', 1);
                             colSpan = 1;
 
                             // modal setup
-                            currJob.onclick = () => {
+                            currOp.onclick = () => {
                                 document.querySelector('#mainmodal').classList.add("is-active");
-                                let buttonJob  =  jobs.find(j => j.id == currJobIdLocal);
-                                let buttonPart = parts.find(p => p.partId == jobElements[currJobIdLocal].part);
+                                let buttonJob  = jobs.find(j => j.id == currOpIdLocal);
+                                let buttonPart = parts.find(p => p.partId == opElements[currOpIdLocal].part);
                                 document.querySelector('#modal-title').innerText = "Job - " + buttonJob.name
                                 document.querySelector('#modal-part').innerText = buttonPart.partName;
                                 document.querySelector('#modal-part').setAttribute("href", "http://{{WEBSITE_IP}}/parts/" + buttonPart.partId)
@@ -224,31 +269,32 @@
                                 })
                             }
 
-                            document.querySelector(`#${machine}-job`).appendChild(currJob)
+                            document.querySelector(`#${machine}-op`).appendChild(currOp)
                         } 
                         else {
                             colSpan += 1;
-                            currJob.setAttribute('colspan', colSpan);
+                            currOp.setAttribute('colspan', colSpan);
                         }
                     }
                     else {
-                        currJob = null;
-                        document.querySelector(`#${machine}-job`).insertAdjacentHTML("beforeend", `<td></td>`);
+                        currOp = null;
+                        currUuid = null;
+                        document.querySelector(`#${machine}-op`).insertAdjacentHTML("beforeend", `<td></td>`);
                     }
 
                     document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] ?  schedule[machine][i][1] : ""}</td>`);
                     document.querySelector(`#${machine}-producing`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] ?  schedule[machine][i][2] : ""}</td>`);
-                    today = new Date(today.getTime() + 86400000);
+                    today = new Date(today.getTime() + 900000);
                 }
             }
-            for (let key of Object.keys(jobElements)) {
-                let jobPart = parts.find(p => p.partId == jobElements[key].part);
+            for (let key of Object.keys(opElements)) {
+                let jobPart = parts.find(p => p.partId == opElements[key].part);
 
                 let possible = true;
                 jobPart.tools.forEach(tId => { 
-                    if (tools.find(t => t.id == tId).machine !== jobElements[key].machine) possible = false; // Optimise with once-thru on tool array
+                    if (tools.find(t => t.id == tId).machine !== opElements[key].machine) possible = false; // Optimise with once-thru on tool array
                 });
-                jobElements[key].element.classList.add(possible ? "istooled" : "isnottooled");
+                opElements[key].element.classList.add(possible ? "istooled" : "isnottooled");
             }
             document.querySelector("#loadingcircle").style.opacity = "0";
             document.querySelector('#loadingdim').style.backgroundColor = "rgba(10,10,10,0)"

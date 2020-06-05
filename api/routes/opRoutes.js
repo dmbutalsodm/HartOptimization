@@ -85,5 +85,13 @@ module.exports = {
                 res.json({status: "ok", message: "The op was deleted."});
             })
         })
+
+        app.get('/api/ops/', (req, res) => {
+            let retArr = [];
+            partManager.getAllParts().then(p => {
+                p.forEach(pt => retArr = retArr.concat(pt.ops));
+                res.json(retArr);
+            })
+        })
     }
 }
