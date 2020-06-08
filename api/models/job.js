@@ -52,5 +52,13 @@ module.exports = {
 
     getActiveParts() {
         return db.query("SELECT * FROM jobs INNER JOIN parts ON jobs.partId = parts.partId", { type: QueryTypes.SELECT }).then(r => r.map(e => e.partId));
+    },
+
+    deleteJob(id) {
+        return jobs.destroy({
+            where: {
+                id: id
+            }
+        })
     }
 }

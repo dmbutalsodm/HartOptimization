@@ -12,7 +12,7 @@ module.exports = {
             res.json(toolManager.getTools());
         })
         
-        app.get('/api/tools/:id', (req, res) => {
+        app.get('/api/tools/:id(t[0-9]+)', (req, res) => {
             res.json(toolManager.getTool(req.params.id));
         })
         

@@ -113,3 +113,12 @@ Creates a new job. Requires 4 parameters in the post body.
 * `partId`: The ID of the part that is running in this job.
 * `partCount`: The amount of parts that are to be made in this job.
 * `startDate`: The day this job will start, in YYYY/MM/DD format.
+
+POST /api/jobs/updatepriority
+Changes the priority of an existing job.
+* `jobId`: The ID of the job to edit.
+* `priority`: The new priority to apply to the job.
+
+POST /api/jobs/delete
+Deletes an existing job.
+* `jobId`: The ID of the job to delete.

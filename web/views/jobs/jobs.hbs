@@ -8,7 +8,8 @@
     <a href="add/" class="button is-info">Add new job</a>
     <div id="jobbox">
         {{#each this.jobs}}
-            <div jobid="{{this.id}}" class="box flexorder" style="width:80%; order:{{subtract 10000 this.priority}}">
+            <div jobid="{{this.id}}" class="box flexorder" style="position: relative; width:80%; order:{{subtract 10000 this.priority}}">
+                <a onclick="deleteJob('{{this.id}}', this)" class="deletebutton tag button is-danger" confirmed="false">Delete job</a>
                 <div class="verticalsholder">
                     <div class="prioritymeter">
                         <i onclick="prioUp(this)" style="zoom:1.5" class='fa fa-arrow-circle-o-up'></i>
@@ -36,6 +37,34 @@
 </div>
 
 <style>
+
+    .deletebutton {
+        position: absolute;
+        top: 20px;
+        right: 10px;
+    }
+
+    .slideout {
+        animation: slideout 1s forwards ease-out;
+    }
+
+    @keyframes slideout {
+        0% {
+            position: relative;
+            left: 0;
+            opacity: 1;
+            max-height: 1000px;
+
+        }
+        100% {
+            position: relative;
+            left: 100%;
+            opacity: 0;
+            max-height: 0px;
+            padding: 0;
+            margin: 0;
+        }
+    }
 
     .box:last-child {
         margin-bottom: 1.5rem !important;
@@ -131,6 +160,20 @@
 </style>
 
 <script>
+    
+    function deleteJob(id, e) {
+        if (e.getAttribute('confirmed') == 'false') {
+            e.setAttribute('confirmed', 'true');
+            e.innerText = "Click to confirm"
+            return;
+        }
+        if (e.getAttribute('confirmed') == 'true') axios.post("http://{{WEBSITE_IP}}:3000/api/jobs/delete", {jobId: id}).then(r => {
+            if (r.data.status == "ok") {
+                e.parentElement.classList.add('slideout')
+            }
+        })
+    }
+
     let orderTimeout = {};
 
     function prioUp(e) {
@@ -153,7 +196,7 @@
             pl.style.backgroundColor = "#D3D3D3";
             setTimeout(() => pl.style.backgroundColor = "#FFFFFF", 750);
             pl.style.order = 10000 - parseInt(e.parentNode.children[1].innerText);
-            axios.post('http://{{WEBSITE_IP}}:3000/api/jobs/' + jid + "/updatepriority", {
+            axios.post('http://{{WEBSITE_IP}}:3000/api/jobs/updatepriority', {
                 jobId: jid,
                 priority: parseInt(e.parentNode.children[1].innerText)
             })

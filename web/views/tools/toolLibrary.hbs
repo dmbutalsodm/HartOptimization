@@ -14,7 +14,7 @@
     <div id="toolbox">
         {{#each this.tools}}
             <div class="toolcard box" id="{{id}}" searchstring="{{generateSearchString attributes}}{{#if machine}} machine: {{machine}}{{/if}}">
-                <a onclick="deleteTool('{{id}}')" class="deletebutton tag button is-danger">Delete op</a>
+                <a onclick="deleteTool('{{id}}', this)" class="deletebutton tag button is-danger" confirmed="false">Delete tool</a>
                 <p class="toolattributesprinted {{id}}">{{prettyStringifyObject attributes}}{{#if machine}}<strong>machine: {{machine}}</strong>{{/if}}</p>
             </div>
         {{/each}} 
@@ -99,10 +99,15 @@
         })
     })
 
-    function deleteTool(id) {
-        axios.post("http://{{WEBSITE_IP}}:3000/api/ops/delete", {toolId: id}).then(r => {
+    function deleteTool(id, e) {
+        if (e.getAttribute('confirmed') == 'false') {
+            e.setAttribute('confirmed', 'true');
+            e.innerText = "Click to confirm"
+            return;
+        }
+        if (e.getAttribute('confirmed') == 'true') axios.post("http://{{WEBSITE_IP}}:3000/api/tools/delete", {toolId: id}).then(r => {
             if (r.data.status == "ok") {
-                document.querySelector("#box-" + opId).classList.add("slideout");
+                e.parentElement.classList.add('slideout')
             }
         })
     }

@@ -7,7 +7,7 @@ class ToolManager {
         this.tools = [];
     }
 
-    deleteTool(id) {
+    async deleteTool(id) {
         let ind = -1;
         for (let i = 0; i < this.tools.length; i++) {
             if (this.tools[i].id == id) {
@@ -16,8 +16,7 @@ class ToolManager {
             }
         }
         this.tools.splice(ind, 1);
-
-        toolDB.deleteTool(id);
+        return toolDB.deleteTool(id);
     }
 
     getTools() {

@@ -5,7 +5,11 @@
     <img src="/images/tool.png" style="margin: 5px; width: 100px"/>
     <div id="kvpcontainer" action="http://{{WEBSITE_IP}}:3000/machines">
         {{>keyvaluepair initialKeyValue="name" readonly="true"}}
-        {{>keyvaluepair initialKeyValue="pockets" readonly="true"}}
+        <div class="keyvaluepair-partial-kvp-container" style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+            <input class="input" style="width:40%" type="text" placeholder="key" value="pockets" readonly="">
+            <span><strong>|</strong></span>
+            <input class="input" style="width:40%" type="text" placeholder="value" value="" type="number">
+        </div>
     </div>
     <button style="margin: 5px 0 5px 0" class="button is-info" onclick="addBlankAttribute()">Add another attribute</button>
     <button id="submitbutton" style="margin: 5px 0 5px 0" class="button is-info" onclick="submitForm()">Save this tool</button>

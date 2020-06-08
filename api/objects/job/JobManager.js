@@ -14,6 +14,10 @@ class JobManager {
     async updatePriority(id, prio) {
         return jobDB.updatePriority(id, prio);
     }
+
+    async deleteJob(id) {
+        return jobDB.deleteJob(id);
+    }
 }
 
 module.exports = new JobManager();

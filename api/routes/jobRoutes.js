@@ -19,11 +19,18 @@ module.exports = {
             res.json(await jobManager.getJobs());
         });
 
-        app.post('/api/jobs/:id/updatepriority', async (req, res) => {
+        app.post('/api/jobs/updatepriority', async (req, res) => {
             if (!req.body.jobId)    return res.json({status: "error", message: "The jobId field is required in the post body."})
             if (!req.body.priority) return res.json({status: "error", message: "The priority field is required in the post body."})
             return jobManager.updatePriority(req.body.jobId, req.body.priority).then(() => {
                 return res.json({status: "ok", message: "The priority was updated."});
+            })          
+        });
+
+        app.post('/api/jobs/delete', async (req, res) => {
+            if (!req.body.jobId)    return res.json({status: "error", message: "The jobId field is required in the post body."})
+            return jobManager.deleteJob(req.body.jobId).then(() => {
+                return res.json({status: "ok", message: "The job was deleted."});
             })          
         });
     }
