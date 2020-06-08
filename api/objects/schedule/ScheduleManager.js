@@ -29,13 +29,13 @@ class ScheduleManager {
         return Array.from(new Set([...a1, ...a2]));
     }
 
-    generateProductionArray(opId, balance, intervalsPerPart) {
+    generateProductionArray(opId, balance, intervalsPerPart, opName) {
         const intervals = [];
         // Balance represents the parts that still need to be made at the beginning of the day.
         for (let prodNum = 0; prodNum < balance; prodNum++) {
             let thisOp = Uuid.getSnowflake();
             for (let i = 0; i < intervalsPerPart; i++) {
-                intervals.push([opId, thisOp, balance - prodNum]);
+                intervals.push([opId, thisOp, balance - prodNum, opName]);
             }
         }
         return intervals;
@@ -104,7 +104,7 @@ class ScheduleManager {
                     opGroup.ops.splice(i+1, 1); // removes op2 from the array
                     o1.opId      = o1.opId + "|" + o2.opId;
                     o1.intervals = parseInt(o1.intervals) + parseInt(o2.intervals);
-                    o1.opName    = o1.opName + " and " + o2.opName
+                    o1.opName    = o1.opName + " and " + o2.opName;
                     o1.machines  = this.intersectArray(o1.machines, o2.machines); // Can only be completed in common machines
                     o1.tools     = this.unionArray(o1.tools, o2.tools); // Needs all the tools that either op needs.
                 }
@@ -113,7 +113,7 @@ class ScheduleManager {
         
         for (let opGroup of opGroupings) {
             for (let i = 0; i < opGroup.ops.length; i++) {
-                opGroup.ops[i].prodArray = (this.generateProductionArray(opGroup.ops[i].opId, opGroup.count, opGroup.ops[i].intervals));
+                opGroup.ops[i].prodArray = (this.generateProductionArray(opGroup.ops[i].opId, opGroup.count, opGroup.ops[i].intervals, opGroup.ops[i].opName));
             }
         }
         
@@ -134,13 +134,20 @@ class ScheduleManager {
                 }
                 if (!ableToSchedule) {
                     let opMachines = currOps[i].machines.slice();
-                    let bestMachine = this.selectBestMachine(opMachines, machinePopularities); 
-                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate));
+                    let currMin = 10000000;
+                    let bestMachine = null;
+                    opMachines.forEach(m => {
+                        let cv = this.getNextStartDate(schedule[m], opGroup.startDate);
+                        if (cv < currMin) {
+                            currMin = cv;
+                            bestMachine = m;
+                        }
+                    });
+                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine]));
                     machinePopularities[bestMachine] += 2;
                 }
             }  
         }
-        console.log(schedule);
         return schedule;
     }
 }

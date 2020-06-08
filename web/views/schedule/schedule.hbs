@@ -32,7 +32,6 @@
                 <tr id="{{id}}-date"><td>Date</td></tr>
                 <tr id="{{id}}-op"><td>Op</td></tr>
                 <tr id="{{id}}-balance"><td>Balance</td></tr>
-                <tr id="{{id}}-producing"><td>Production</td></tr>
             </table>
         {{/each}}
     </div>
@@ -235,6 +234,7 @@
                 let currUuid = null;
                 let currOpId = "";
                 let colSpan = 1;
+                let printBalance = true;
                 for (let i = 0; i < schedule[machine].length; i++) {
                     document.querySelector(`#${machine}-date`).insertAdjacentHTML("beforeend", `<td>${today.getMonth() + 1}/${today.getUTCDate()} ${today.getHours() % 12 || 12}:${(today.getMinutes() + "").padEnd(2, "0")}</td>`);
                     if (schedule[machine][i]) {
@@ -245,10 +245,11 @@
                             let currOpIdLocal = currOpId;
                             opElements[currOpIdLocal] = {element: currOp, machine: machine, part: (ops.find(o => o.opId == currOpIdLocal.split("|")[0])).parentPartId};
                             let currOpObject = ops.find(o => o.opId == currOpIdLocal.split("|")[0]);
-                            currOp.innerText = currOpObject.opName
+                            currOp.innerText = schedule[machine][i][3]
                             currOp.classList.add("modbutton")
                             currOp.setAttribute('colspan', 1);
                             colSpan = 1;
+                            printBalance = true;
 
                             // modal setup
                             currOp.onclick = () => {
@@ -282,8 +283,8 @@
                         document.querySelector(`#${machine}-op`).insertAdjacentHTML("beforeend", `<td></td>`);
                     }
 
-                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] ?  schedule[machine][i][1] : ""}</td>`);
-                    document.querySelector(`#${machine}-producing`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] ?  schedule[machine][i][2] : ""}</td>`);
+                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] && printBalance ? schedule[machine][i][2] : ""}</td>`);
+                    printBalance = false;
                     today = new Date(today.getTime() + 900000);
                 }
             }
