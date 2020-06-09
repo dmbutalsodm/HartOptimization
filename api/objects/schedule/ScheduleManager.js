@@ -74,7 +74,7 @@ class ScheduleManager {
     }
 
     getNextStartDate(schedule, startDate) {
-        let s = this.dateToIntervalsFromNow(startDate);
+        let s = this.dateToIntervalsFromNow(startDate); 
         while (schedule[s]) s += 1;
         return s;
     }
@@ -136,6 +136,8 @@ class ScheduleManager {
                     let opMachines = currOps[i].machines.slice();
                     let currMin = 10000000;
                     let bestMachine = null;
+                    /* EXIT CONDITION FOR IMPOSSIBLE TO SCHEDULE - NO MACHINES POSSIBLE FOR OPS */ 
+                    if (!opMachines.length) throw {name: 'opMachinesError', partId: opGroup.job.partId};
                     opMachines.forEach(m => {
                         let cv = this.getNextStartDate(schedule[m], opGroup.startDate);
                         if (cv < currMin) {
@@ -143,7 +145,7 @@ class ScheduleManager {
                             bestMachine = m;
                         }
                     });
-                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine]));
+                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate));
                     machinePopularities[bestMachine] += 2;
                 }
             }  

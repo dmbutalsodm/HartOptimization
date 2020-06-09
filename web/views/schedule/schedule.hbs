@@ -18,6 +18,16 @@
         </div>
         <button class="modal-close is-large" onclick="document.querySelector('#mainmodal').classList.remove('is-active')" />
     </div>
+    <div id="errormodal" class="modal">
+        <div class="modal-background" onclick="document.querySelector('#errormodal').classList.remove('is-active')"></div>
+        <div class="modal-content box errormodal-content">
+                <p class="title is-4" id="modal-title">Error</p>
+                <p class="title is-6">Part:</p>
+                <p style="margin-bottom:50px;" class="subtitle is-6"><a id="errormodal-part"></a></p>
+                <p id="errormodal-description" class="title is-6"></p>
+        </div>
+        <button class="modal-close is-large" onclick="document.querySelector('#errormodal').classList.remove('is-active')" />
+    </div>
     <div id="headerholder">
         <img src="/images/scheduling.png" style="width:50%; max-width: 180px; margin-bottom: 5px;" />
         <p class="title is-4">This is a potential schedule, organised by machine.</p>
@@ -215,6 +225,13 @@
             parts    = Object.freeze(parts.data);
             ops      = Object.freeze(ops.data);
             
+            if (schedule.status && schedule.status == "error" && schedule.name == "opMachinesError") {
+                document.querySelector('#errormodal-description').innerText = "Please ensure all the ops in the part above have machines assigned to them. Especially make sure that sequential ops have at least one common machine."
+                document.querySelector('#errormodal').classList.add("is-active");
+                document.querySelector('#errormodal-part').setAttribute('href', `http://{{WEBSITE_IP}}/parts/${schedule.partId}`);
+                document.querySelector('#errormodal-part').innerText = "Click here to go to the errored part."
+                return;
+            }
             
             const th = document.querySelector('#tablesholder')
             th.onscroll = () => {
