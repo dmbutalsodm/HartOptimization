@@ -216,6 +216,7 @@
                 axios.get('http://{{WEBSITE_IP}}:3000/api/ops')
             ]
         ).then(results => {
+            console.log("all reqs ok!")
             let     [schedule, machines, tools, jobs, parts, ops] = results;
 
             schedule = Object.freeze(schedule.data);
@@ -240,8 +241,6 @@
                 })
             }
 
-            console.log("all reqs ok!")
-
             let opElements = {};
             
             for (let machine of Object.keys(schedule)) {
@@ -255,14 +254,14 @@
                 for (let i = 0; i < schedule[machine].length; i++) {
                     document.querySelector(`#${machine}-date`).insertAdjacentHTML("beforeend", `<td>${today.getMonth() + 1}/${today.getUTCDate()} ${today.getHours() % 12 || 12}:${(today.getMinutes() + "").padEnd(2, "0")}</td>`);
                     if (schedule[machine][i]) {
-                        if (!currUuid || currUuid != schedule[machine][i][1]) {
+                        if (!currUuid || currUuid != schedule[machine][i].opUuid) {
                             currOp = document.createElement("td");
-                            currOpId = schedule[machine][i][0];
-                            currUuid = schedule[machine][i][1];
+                            currOpId = schedule[machine][i].opId;
+                            currUuid = schedule[machine][i].opUuid;
                             let currOpIdLocal = currOpId;
                             opElements[currOpIdLocal] = {element: currOp, machine: machine, part: (ops.find(o => o.opId == currOpIdLocal.split("|")[0])).parentPartId};
                             let currOpObject = ops.find(o => o.opId == currOpIdLocal.split("|")[0]);
-                            currOp.innerText = schedule[machine][i][3]
+                            currOp.innerText = schedule[machine][i].opName
                             currOp.classList.add("modbutton")
                             currOp.setAttribute('colspan', 1);
                             colSpan = 1;
@@ -300,7 +299,7 @@
                         document.querySelector(`#${machine}-op`).insertAdjacentHTML("beforeend", `<td></td>`);
                     }
 
-                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] && printBalance ? schedule[machine][i][2] : ""}</td>`);
+                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] && printBalance ? schedule[machine][i].balance : ""}</td>`);
                     printBalance = false;
                     today = new Date(today.getTime() + 900000);
                 }

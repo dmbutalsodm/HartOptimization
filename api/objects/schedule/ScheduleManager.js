@@ -29,13 +29,20 @@ class ScheduleManager {
         return Array.from(new Set([...a1, ...a2]));
     }
 
-    generateProductionArray(opId, balance, intervalsPerPart, opName) {
+    generateProductionArray(opId, balance, intervalsPerPart, opName, jobName) {
         const intervals = [];
         // Balance represents the parts that still need to be made at the beginning of the day.
         for (let prodNum = 0; prodNum < balance; prodNum++) {
             let thisOp = Uuid.getSnowflake();
             for (let i = 0; i < intervalsPerPart; i++) {
-                intervals.push([opId, thisOp, balance - prodNum, opName]);
+                // [opId, thisOp, balance - prodNum, opName]
+                intervals.push({
+                    opId: opId,
+                    opUuid: thisOp,
+                    balance: balance - prodNum,
+                    opName: opName,
+                    jobName: jobName
+                });
             }
         }
         return intervals;
@@ -54,18 +61,18 @@ class ScheduleManager {
         return currMinMachine;
     }
 
-    canSchedule(currSchedule, targetMachine, productionArray, startDate) {
+    canSchedule(currSchedule, targetMachine, productionArray, startDate, dateOffset) {
         let targetSchedule = currSchedule[targetMachine];
-        let startPos = this.dateToIntervalsFromNow(startDate);
-        let endPos = startPos + productionArray.length;
+        let startPos = this.dateToIntervalsFromNow(startDate) + dateOffset;
+        let endPos = startPos + productionArray.length + dateOffset;
         for (let i = startPos + 1; i <= endPos; i++) if (targetSchedule[i] != null) return false;
         return true;
     }
 
-    schedule(currSchedule, targetMachine, productionArray, startDate) {
+    schedule(currSchedule, targetMachine, productionArray, startDate, dateOffset) {
         let targetSchedule = currSchedule[targetMachine];
-        let startPos = typeof startDate == "string" ? this.dateToIntervalsFromNow(startDate) : startDate;
-        let endPos = startPos + productionArray.length;
+        let startPos = typeof startDate == "string" ? this.dateToIntervalsFromNow(startDate) + dateOffset : startDate;
+        let endPos = startPos + productionArray.length + dateOffset;
         let c = 0;
         for (let i = startPos; i < endPos; i++) {
             targetSchedule[i] = productionArray[c];
@@ -79,7 +86,16 @@ class ScheduleManager {
         return s;
     }
 
+    generateOffset(opArray, currentOp) {
+        let offset = 0;
+        for (let i = 0; i < opArray.length; i++) {
+            if (opArray[i] == currentOp) return offset;
+            offset += opArray[i].intervals
+        }
+    }
+
     async generatePrelimSchedule() {
+        let o = Date.now();
         const machinePopularities = await machineManager.getMachinePopularities();
         const schedule = this.generateEmptySchedule();
         // Jobs come in arranged in highest priority, i.e. in correct order.
@@ -113,7 +129,7 @@ class ScheduleManager {
         
         for (let opGroup of opGroupings) {
             for (let i = 0; i < opGroup.ops.length; i++) {
-                opGroup.ops[i].prodArray = (this.generateProductionArray(opGroup.ops[i].opId, opGroup.count, opGroup.ops[i].intervals, opGroup.ops[i].opName));
+                opGroup.ops[i].prodArray = this.generateProductionArray(opGroup.ops[i].opId, opGroup.count, opGroup.ops[i].intervals, opGroup.ops[i].opName, opGroup.job.name);
             }
         }
         
@@ -124,12 +140,12 @@ class ScheduleManager {
                 let opMachines = currOps[i].machines.slice();
                 while (!ableToSchedule && opMachines.length) {
                     let bestMachine = this.selectBestMachine(opMachines, machinePopularities);
-                    if (this.canSchedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate)) {
+                    if (this.canSchedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate), this.generateOffset(currOps, currOps[i])) {
                         ableToSchedule = true;
-                        this.schedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate)
+                        this.schedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate, this.generateOffset(currOps, currOps[i]))
                         machinePopularities[bestMachine] += 1;
                     } else {
-                        opMachines.splice(opMachines.indexOf(bestMachine), 1);
+                        opMachines.splice(opMachines.indexOf(bestMachine), 1); 
                     }
                 }
                 if (!ableToSchedule) {
@@ -145,11 +161,12 @@ class ScheduleManager {
                             bestMachine = m;
                         }
                     });
-                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate));
+                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate), this.generateOffset(currOps, currOps[i]));
                     machinePopularities[bestMachine] += 2;
                 }
             }  
         }
+        
         return schedule;
     }
 }

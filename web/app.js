@@ -155,4 +155,9 @@ app.get('/scheduling', async (req, res) => {
     res.render('./schedule/schedule.hbs', {machines, WEBSITE_IP});
 })
 
+app.get('/production', async (req, res) => {
+    res.render('./production/production.hbs', {WEBSITE_IP});
+})
+
+
 app.listen(80, () => console.log("Listening on port 80"))
