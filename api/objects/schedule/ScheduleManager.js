@@ -4,6 +4,20 @@ const partManager = require('../part/PartManager.js');
 const Uuid = require('../UuidGenerator.js');
 
 const INTERVALS_PER_DAY = 32;
+const colors = [
+    '#0066ff',
+    '#9900cc',
+    '#00cc00',
+    '#000066',
+    '#0099cc',
+    '#cc6600',
+    '#ff00ff',
+    '#00cc66',
+    '#3366cc',
+    '#993366',
+    '#3366ff',
+    '#4d0019'
+]
 
 class ScheduleManager {
     generateEmptySchedule() {
@@ -29,7 +43,7 @@ class ScheduleManager {
         return Array.from(new Set([...a1, ...a2]));
     }
 
-    generateProductionArray(opId, balance, intervalsPerPart, opName, jobName) {
+    generateProductionArray(opId, balance, intervalsPerPart, opName, jobName, jobId, inBetweenOffset, color) {
         const intervals = [];
         // Balance represents the parts that still need to be made at the beginning of the day.
         for (let prodNum = 0; prodNum < balance; prodNum++) {
@@ -41,6 +55,16 @@ class ScheduleManager {
                     opUuid: thisOp,
                     balance: balance - prodNum,
                     opName: opName,
+                    jobName: jobName,
+                    jobId: jobId,
+                    color: color,
+                });
+            }
+            for (let i = 0; i < inBetweenOffset; i++) {
+                intervals.push({
+                    opId: "PLACEHOLDER",
+                    opUuid: 0,
+                    opName: "",
                     jobName: jobName
                 });
             }
@@ -86,11 +110,26 @@ class ScheduleManager {
         return s;
     }
 
-    generateOffset(opArray, currentOp) {
+    generateInitialOffset(opArray, currentOp) {
         let offset = 0;
         for (let i = 0; i < opArray.length; i++) {
             if (opArray[i] == currentOp) return offset;
             offset += opArray[i].intervals
+        }
+    }
+
+    generateMiddleOffset(opArray, currentOp) {
+        let offset = 0;
+        if (opArray[0] == currentOp) return offset;
+        for (let i = 1; i < opArray.length; i++) {
+            if (opArray[i - 1].holds) {
+                offset = (opArray[i - 1].intervals + opArray[i - 1].holds) - opArray[i].intervals
+            } else offset = opArray[i - 1].intervals - opArray[i].intervals
+            if (offset < 0) offset = 0;
+            if (opArray[i] == currentOp) {
+                opArray[i].holds = offset;
+                return offset;
+            }
         }
     }
 
@@ -108,7 +147,6 @@ class ScheduleManager {
                 startDate: job.startDate,
                 count: job.partCount,
                 ops: part.ops,
-                prodArrays: [],
             });
         }
         for (let opGroup of opGroupings) { // combines sequential ops into 1 op
@@ -128,8 +166,18 @@ class ScheduleManager {
         }
         
         for (let opGroup of opGroupings) {
+            let color = colors[parseInt(opGroup.job.id.substring(1)) % colors.length]
             for (let i = 0; i < opGroup.ops.length; i++) {
-                opGroup.ops[i].prodArray = this.generateProductionArray(opGroup.ops[i].opId, opGroup.count, opGroup.ops[i].intervals, opGroup.ops[i].opName, opGroup.job.name);
+                opGroup.ops[i].prodArray = this.generateProductionArray(
+                    opGroup.ops[i].opId,
+                    opGroup.count,
+                    opGroup.ops[i].intervals,
+                    opGroup.ops[i].opName,
+                    opGroup.job.name,
+                    opGroup.job.id,
+                    this.generateMiddleOffset(opGroup.ops, opGroup.ops[i]),
+                    color
+                );
             }
         }
         
@@ -140,9 +188,9 @@ class ScheduleManager {
                 let opMachines = currOps[i].machines.slice();
                 while (!ableToSchedule && opMachines.length) {
                     let bestMachine = this.selectBestMachine(opMachines, machinePopularities);
-                    if (this.canSchedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate), this.generateOffset(currOps, currOps[i])) {
+                    if (this.canSchedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate, this.generateInitialOffset(currOps, currOps[i]))) {
                         ableToSchedule = true;
-                        this.schedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate, this.generateOffset(currOps, currOps[i]))
+                        this.schedule(schedule, bestMachine, currOps[i].prodArray, opGroup.startDate, this.generateInitialOffset(currOps, currOps[i]))
                         machinePopularities[bestMachine] += 1;
                     } else {
                         opMachines.splice(opMachines.indexOf(bestMachine), 1); 
@@ -161,7 +209,7 @@ class ScheduleManager {
                             bestMachine = m;
                         }
                     });
-                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate), this.generateOffset(currOps, currOps[i]));
+                    this.schedule(schedule, bestMachine, currOps[i].prodArray, this.getNextStartDate(schedule[bestMachine], opGroup.startDate), this.generateInitialOffset(currOps, currOps[i]));
                     machinePopularities[bestMachine] += 2;
                 }
             }  

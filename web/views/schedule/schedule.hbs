@@ -31,9 +31,9 @@
     <div id="headerholder">
         <img src="/images/scheduling.png" style="width:50%; max-width: 180px; margin-bottom: 5px;" />
         <p class="title is-4">This is a potential schedule, organised by machine.</p>
-        <p style="margin-top:-15px">The balance represents the parts remaining to be produced at the <strong>beginning</strong> of the day.</p>
-        <p>Jobs displayed in <span style="color:#3298dc">blue</span> mean that the selected machine has necessary tools.</p>
-        <p style="margin-bottom: 20px;">Jobs displayed in <span style="color:#ee5655">red</span> mean that the selected machine does <strong>NOT</strong> have the necessary tools.</p>
+        <p style="margin-top:-15px; margin-bottom:20px">The balance represents the parts remaining to be produced at the <strong>beginning</strong> of the day.</p>
+        {{!-- <p>Jobs displayed in <span style="color:#3298dc">blue</span> mean that the selected machine has necessary tools.</p>
+        <p style="margin-bottom: 20px;">Jobs displayed in <span style="color:#ee5655">red</span> mean that the selected machine does <strong>NOT</strong> have the necessary tools.</p> --}}
     </div>
     <div id='tablesholder'>
         {{#each this.machines}}
@@ -124,11 +124,10 @@
         flex-direction: column;
         padding-left: 40px;
         padding-top: 50px;
-        overflow-y: scroll;
+        overflow-y: hidden;
     }
 
     .modbutton {
-        background-color: blue;
         color: white;
         filter: brightness(100%);
     }
@@ -206,6 +205,26 @@
         if (lOrR == "left") th.scrollTo({left: th.scrollLeft - (th.clientWidth * .85), behavior: "smooth"});
     }
 
+    function populateJobModal(jobId) {
+        axios.get("http://{{WEBSITE_IP}}:3000/api/jobs").then(async r => {
+            let jobArray = r.data;
+            let foundJob = jobArray.find(j => j.id == jobId);
+            let foundPart = (await axios.get("http://{{WEBSITE_IP}}:3000/api/parts/" + foundJob.partId)).data
+            console.log(foundJob, foundPart)
+
+            document.querySelector('#mainmodal').classList.add("is-active");
+            document.querySelector('#modal-title').innerText = "Job - " + foundJob.name
+            document.querySelector('#modal-part').innerText = foundPart.partName;
+            document.querySelector('#modal-part').setAttribute("href", "http://{{WEBSITE_IP}}/parts/" + foundPart.partId)
+            document.querySelector('#modal-partcount').innerText = foundJob.partCount;
+            document.querySelector('#modal-startdate').innerText = foundJob.startDate;
+            let toolbox = document.querySelector('#toolbox');
+            toolbox.innerHTML = 'Not yet implemented';
+            
+        })
+        
+    }
+
     Promise.all(
             [
                 axios.get('http://{{WEBSITE_IP}}:3000/api/scheduling'),
@@ -259,32 +278,22 @@
                             currOpId = schedule[machine][i].opId;
                             currUuid = schedule[machine][i].opUuid;
                             let currOpIdLocal = currOpId;
-                            opElements[currOpIdLocal] = {element: currOp, machine: machine, part: (ops.find(o => o.opId == currOpIdLocal.split("|")[0])).parentPartId};
+
+                            opElements[currOpIdLocal] = {element: currOp, machine: machine, part: currOpIdLocal == "PLACEHOLDER" ? {} : (ops.find(o => o.opId == currOpIdLocal.split("|")[0])).parentPartId};
                             let currOpObject = ops.find(o => o.opId == currOpIdLocal.split("|")[0]);
                             currOp.innerText = schedule[machine][i].opName
-                            currOp.classList.add("modbutton")
+                            if (currOpIdLocal != "PLACEHOLDER") {
+                                currOp.classList.add("modbutton")
+                                currOp.style.backgroundColor = schedule[machine][i].color
+                            }
                             currOp.setAttribute('colspan', 1);
                             colSpan = 1;
                             printBalance = true;
 
                             // modal setup
                             currOp.onclick = () => {
-                                document.querySelector('#mainmodal').classList.add("is-active");
-                                let buttonJob  = jobs.find(j => j.id == currOpIdLocal);
-                                let buttonPart = parts.find(p => p.partId == opElements[currOpIdLocal].part);
-                                document.querySelector('#modal-title').innerText = "Job - " + buttonJob.name
-                                document.querySelector('#modal-part').innerText = buttonPart.partName;
-                                document.querySelector('#modal-part').setAttribute("href", "http://{{WEBSITE_IP}}/parts/" + buttonPart.partId)
-                                document.querySelector('#modal-partcount').innerText = buttonJob.partCount;
-                                document.querySelector('#modal-startdate').innerText = buttonJob.startDate;
-                                let toolbox = document.querySelector('#toolbox');
-                                toolbox.innerHTML = '';
-                                buttonPart.tools.forEach(pt => {
-                                    let e = document.createElement("p");
-                                    e.innerText = tools.find(t => t.id == pt).attributes.name;
-                                    toolbox.appendChild(e);
-                                })
-                            }
+                                populateJobModal(schedule[machine][i].jobId);
+                            } 
 
                             document.querySelector(`#${machine}-op`).appendChild(currOp)
                         } 
@@ -299,19 +308,10 @@
                         document.querySelector(`#${machine}-op`).insertAdjacentHTML("beforeend", `<td></td>`);
                     }
 
-                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] && printBalance ? schedule[machine][i].balance : ""}</td>`);
+                    document.querySelector(`#${machine}-balance`).insertAdjacentHTML("beforeend", `<td>${schedule[machine][i] && schedule[machine][i].opId != "PLACEHOLDER" && printBalance ? schedule[machine][i].balance : ""}</td>`);
                     printBalance = false;
                     today = new Date(today.getTime() + 900000);
                 }
-            }
-            for (let key of Object.keys(opElements)) {
-                let jobPart = parts.find(p => p.partId == opElements[key].part);
-
-                let possible = true;
-                jobPart.tools.forEach(tId => { 
-                    if (tools.find(t => t.id == tId).machine !== opElements[key].machine) possible = false; // Optimise with once-thru on tool array
-                });
-                opElements[key].element.classList.add(possible ? "istooled" : "isnottooled");
             }
             document.querySelector("#loadingcircle").style.opacity = "0";
             document.querySelector('#loadingdim').style.backgroundColor = "rgba(10,10,10,0)"
