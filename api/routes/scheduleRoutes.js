@@ -6,8 +6,7 @@ module.exports = {
             scheduleManager.generatePrelimSchedule().then(r => {
                 res.json(r);
             }).catch(e => {
-                console.log(e)
-                res.status(501).json({status: "error"})
+                res.json({status: "error", ...e})
             })
             
         })

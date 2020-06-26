@@ -15,12 +15,40 @@
         {{#each this.parts}}
             <div class="partcard" searchstring="name: {{partName}} ops: {{ops.length}}">
                 <a href="/parts/{{partId}}" class="button partbutton">Name: {{partName}}, ops: {{ops.length}}</a>
+                <a onclick="deletePart('{{partId}}', this)" class="deletebutton tag button is-danger" confirmed="false">Delete part</a>
             </div>
         {{/each}} 
     </div>
 </div>
 
 <style>
+    .deletebutton {
+        position: absolute;
+        right: 10px;
+    }
+
+    .slideout {
+        animation: slideout 1s forwards ease-out;
+    }
+
+    @keyframes slideout {
+        0% {
+            position: relative;
+            left: 0;
+            opacity: 1;
+            max-height: 1000px;
+
+        }
+        100% {
+            position: relative;
+            left: 100%;
+            opacity: 0;
+            max-height: 0px;
+            padding: 0;
+            margin: 0;
+        }
+    }
+
     .partcard { 
         display: flex;
         flex-direction: row;
@@ -28,6 +56,7 @@
         min-height: 50px;
         width: 100%;
         border-radius: 5px;
+        position: relative;
     }
     
     .partbutton {
@@ -61,6 +90,19 @@
 </style>
 
 <script>
+    function deletePart(pId, button) {
+        if (button.getAttribute("confirmed") == "false") {
+            button.innerText = "Click to confirm deletion"
+            button.setAttribute("confirmed", "true");
+            return;
+        }
+        axios.post('http://{{WEBSITE_IP}}:3000/api/parts/delete', {id: pId}).then(r => {
+            if (r.data.status == "ok") {
+                button.parentElement.classList.add("slideout");
+            }
+        })
+    }
+
     document.getElementById("partsearch").addEventListener('input', (event) => {
         let search = event.srcElement.value.toLowerCase().trim();
         if (!search) {

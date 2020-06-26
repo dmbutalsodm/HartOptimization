@@ -161,6 +161,8 @@ class ScheduleManager {
                     o1.opName    = o1.opName + " and " + o2.opName;
                     o1.machines  = this.intersectArray(o1.machines, o2.machines); // Can only be completed in common machines
                     o1.tools     = this.unionArray(o1.tools, o2.tools); // Needs all the tools that either op needs.
+                    o1.isSequential = o2.isSequential
+                    i -= 1;
                 }
             }
         }
@@ -203,7 +205,7 @@ class ScheduleManager {
                     /* EXIT CONDITION FOR IMPOSSIBLE TO SCHEDULE - NO MACHINES POSSIBLE FOR OPS */ 
                     if (!opMachines.length) throw {name: 'opMachinesError', partId: opGroup.job.partId};
                     opMachines.forEach(m => {
-                        let cv = this.getNextStartDate(schedule[m], opGroup.startDate);
+                        let cv = this.getNextStartDate(schedule[m], opGroup.startDate);     
                         if (cv < currMin) {
                             currMin = cv;
                             bestMachine = m;

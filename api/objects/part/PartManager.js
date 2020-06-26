@@ -1,6 +1,7 @@
 const partDB = require('../../models/part.js');
 const Uuid = require('../UuidGenerator.js');
 const opDB = require('../../models/op.js')
+const jobDB = require('../../models/job.js')
 
 class PartManager {
     async addNewPart(partName) {
@@ -51,6 +52,17 @@ class PartManager {
             }
             return ret;
         })
+    }
+
+    async deletePart(partId) {
+        let p = await this.getPart(partId);
+        partDB.deletePart(partId)
+        p.ops.forEach(o => {
+            console.log(o.opId);
+            opDB.deleteOp(o.opId);
+        })
+        jobDB.deleteJobsByPart(partId);
+        return;
     }
 }
 

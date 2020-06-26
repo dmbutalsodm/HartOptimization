@@ -60,5 +60,13 @@ module.exports = {
                 id: id
             }
         })
+    },
+
+    deleteJobsByPart(pid) {
+        return jobs.destroy({
+            where: {
+                partId: pid
+            }
+        })
     }
 }

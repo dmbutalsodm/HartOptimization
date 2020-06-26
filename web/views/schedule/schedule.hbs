@@ -30,8 +30,8 @@
     </div>
     <div id="headerholder">
         <img src="/images/scheduling.png" style="width:50%; max-width: 180px; margin-bottom: 5px;" />
-        <p class="title is-4">This is a potential schedule, organised by machine.</p>
-        <p style="margin-top:-15px; margin-bottom:20px">The balance represents the parts remaining to be produced at the <strong>beginning</strong> of the day.</p>
+        <p class="title is-4" style="text-align:center;">This is a potential schedule, organised by machine.</p>
+        <p style="margin-top:-15px; margin-bottom:20px; text-align: center;">The balance represents the parts remaining to be produced at the <strong>beginning</strong> of the day.</p>
         {{!-- <p>Jobs displayed in <span style="color:#3298dc">blue</span> mean that the selected machine has necessary tools.</p>
         <p style="margin-bottom: 20px;">Jobs displayed in <span style="color:#ee5655">red</span> mean that the selected machine does <strong>NOT</strong> have the necessary tools.</p> --}}
     </div>
@@ -174,12 +174,11 @@
     #tablesholder {
         padding: 20px;
         display: block;
-        margin-left: 100px;
-        margin-right: 100px;
         border-radius: 10px 10px 0px 0px;
-        
         box-shadow: rgba(0,0,0,0.8) 0 0 10px;
         overflow-x: scroll;
+        width: 95%;
+        margin-left: 2.5%;
     }
 
     #tablesholder::-webkit-scrollbar {

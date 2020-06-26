@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 const fetch = require('isomorphic-unfetch');
 
-const WEBSITE_IP = 'localhost'
+const WEBSITE_IP = '192.168.16.164'
 
 var app = express();
 app.engine('.hbs', exphbs({

@@ -21,5 +21,11 @@ module.exports = {
                 return res.json(p);
             })
         });
+
+        app.post('/api/parts/delete', (req, res) => {
+            return partManager.deletePart(req.body.id).then(() => {
+                return res.json({status: "ok", message: "That part was deleted."});
+            })
+        });
     }
 }

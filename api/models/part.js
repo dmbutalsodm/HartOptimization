@@ -45,5 +45,13 @@ module.exports = {
                 partId: id
             }
         }).then(modelOrNull => !!modelOrNull);
+    },
+
+    async deletePart(id) {
+        return parts.destroy({
+            where: {
+                partId: id
+            }
+        })
     }
 }
